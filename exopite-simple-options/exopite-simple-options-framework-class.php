@@ -636,24 +636,37 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 		}
 
-		/**
-		 * Get url from path
-		 * works only for local urls
-		 *
-		 * @param  string $path the path
-		 *
-		 * @return string   the generated url
-		 */
-		public function get_url( $path = '' ) {
+        /**
+         * Replace only the first occurence of a string
+         *
+         * @param  string $search  the string to search for
+         * @param  string $replace the string to replace with
+         * @param  string $subject the string to search in
+         *
+         */
+        public function str_replace_first($search, $replace, $subject)
+        {
+            $search = '/'.preg_quote($search, '/').'/';
+            return preg_replace($search, $replace, $subject, 1);
+        }
 
-			$url = str_replace(
-				wp_normalize_path( untrailingslashit( ABSPATH ) ),
-				site_url(),
-				$path
-			);
 
-			return $url;
-		}
+        /**
+         * Get url from path
+         * works only for local urls
+         *
+         * @param  string $path the path
+         *
+         * @return string   the generated url
+         */
+        public function get_url( $path = '' ) {
+            $url = $this->str_replace_first(
+                wp_normalize_path( untrailingslashit( ABSPATH ) ),
+                site_url(),
+                $path
+            );
+            return $url;
+        }
 
 		public function locate_template( $type ) {
 

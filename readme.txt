@@ -5,7 +5,7 @@ Tags: slack, webhook, message, api, alerts
 Requires at least: 3.4
 Tested up to: 6.1
 PHP Tested up to: 8.1
-Stable tag: 5.1.2
+Stable tag: 5.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,6 +88,10 @@ wordpress plugins site.
 == Changelog ==
 
 == Upgrade Notice ==
+= 5.1.3 =
+- fixed double up in get_url() string replace
+
+
 = 5.1.2 =
 - fixed default value for fields
 - fixed missing admin menu item
