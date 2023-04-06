@@ -1,5 +1,7 @@
 <?php
 
+// require once the legacy.php file
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/legacy.php';
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -229,6 +231,21 @@ class Vanilla_Bean_Slack_Hooker_Admin {
 
 
 
+    public function vbean_menu(){
+        if (empty($GLOBALS['admin_page_hooks']['vanillabeans-settings'])) {
+
+            $menu = add_menu_page(
+                'Vanilla Beans',
+                'Vanilla Beans',
+                'manage_options',
+                'vanillabeans-settings', //slug
+                '\VanillaBeans\LiveSettings',
+                SLACKHOOKER_DIR_URL.'/vicon.png',
+                4
+            );
+        }
+
+    }
 
 
 /**
@@ -236,7 +253,12 @@ class Vanilla_Bean_Slack_Hooker_Admin {
      *
      * @since    4.0.0
      */
+
+
+
     public function admin_menu(){
+
+
         if(!isset($this->options['defaultendpoints'])||!is_array($this->options['defaultendpoints'])){
             $fields[] = array(
                 'name'   => 'notices',
@@ -255,9 +277,6 @@ class Vanilla_Bean_Slack_Hooker_Admin {
         }
         $is_submenu = true;
         $parent = 'vanillabeans-settings';
-        if ( empty ( $GLOBALS['admin_page_hooks']['vanillabeans-settings'] ) ) {
-            $parent= 'options-general.php';
-        }
         // sub arrays
         $test =array(
             'options' => array(

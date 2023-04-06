@@ -418,7 +418,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 
 			add_action( 'admin_init', array( $this, 'register_setting' ) );
-			add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+			add_action( 'admin_menu', array( $this, 'add_admin_menu' ),99 );
 			add_action( 'wp_ajax_exopite-sof-export-options', array( $this, 'export_options' ) );
 			add_action( 'wp_ajax_exopite-sof-import-options', array( $this, 'import_options' ) );
 			add_action( 'wp_ajax_exopite-sof-reset-options', array( $this, 'reset_options' ) );
@@ -888,20 +888,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			} else {
 
 //				$this->config = wp_parse_args( $this->config, $default );
-                if (empty($GLOBALS['admin_page_hooks']['vanillabeans-settings'])) {
-                    $menu = add_menu_page(
-                        'Vanilla Beans',
-                        'Vanilla Beans',
-                        'manage-options',
-                        'vanillabeans-settings', //slug
-                        '\VanillaBeans\LiveSettings',
-                        SLACKHOOKER_DIR_URL.'/vicon.png',
-                        4
-                    );
-                }
+
 				$submenu = add_submenu_page(
-					'vanillabeans-settings',
-                    //$this->config['parent'],
+                    $this->config['parent'],
 					$this->config['title'],
 					$this->config['title'],
 					$this->config['capability'],
