@@ -171,6 +171,7 @@ class Vanilla_Bean_Slack_Hooker {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+        $this->loader->add_action( 'admin_menu', $plugin_admin, 'vbean_menu', 1 );
         $this->loader->add_action( 'init', $plugin_admin, 'admin_menu', 999 );
         $this->loader->add_action('exopite_sof_do_save_options', $plugin_admin,'send_test_notification', 20);
         $this->loader->add_action( 'activated_plugin', $plugin_admin, 'plugin_activated', 999 );
