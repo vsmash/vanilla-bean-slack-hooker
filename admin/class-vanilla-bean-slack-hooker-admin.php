@@ -102,7 +102,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
                     'attributes' => array(
                         // mark this field az title, on type this will change group item title
                         'data-title' => 'Endpoint',
-                        'placeholder' => esc_html__( 'https://endpoint#channel#here', 'vanilla-bean-slack-hooker' ),
+                        'placeholder' => esc_html__( 'https://endpoint#channel#here or email address', 'vanilla-bean-slack-hooker' ),
 
                     ),
 
@@ -558,7 +558,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
             // 'tabbed'            => false,                        // is tabbed or not
                                                             // Note: if only one section then
                                                             // Tabs are disabled.
-            //'settings_link'     => array('https://www.pottie.com'),
+            //'settings_link'     => array('https://www.velvary.com.au'),
             'settings-link'     =>  'vanilla-bean-slack-hooker',
 
             'multilang'         => false,                         // Disable mutilang support, default: true
@@ -579,7 +579,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
                     'id'      => 'defaultendpoints',
                     'title'   => esc_html__( 'Default Endpoints', 'vmsh' ),
                     'description' => '',
-                    'after'       => 'eg: <b>https://endpoint, https://endpoint#channel, https://endpoint#channel#here,<br/>https://endpoint##here</b> <i>(no channel)</i><br />Channel is only needed for legacy slack apps and mattermost. You can use "here" or "channel" or "everyone" to use the alert option.',
+                    'after'       => 'eg: <b>https://endpoint, https://endpoint#channel, https://endpoint#channel#here,<br/>https://endpoint##here</b> <i>(no channel)</i><br />Channel is only needed for legacy slack apps and mattermost. You can use "here" or "channel" or "everyone" to use the alert option.<br />You may also choose to use an email address if you prefer it to slack or mattermost',
                     'options' => array(
                         'repeater'          => true,
                         'accordion'         => false,
@@ -597,7 +597,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
                             'attributes' => array(
                                 // mark this field az title, on type this will change group item title
                                 'data-title' => 'Endpoint',
-                                'placeholder' => esc_html__( 'https://yourdomain.cloud.mattermost.com/hooks/xxx#channel', 'vanilla-bean-slack-hooker' ),
+                                'placeholder' => esc_html__( 'https://yourdomain.cloud.mattermost.com/hooks/xxx#channel or email address', 'vanilla-bean-slack-hooker' ),
                             ),
                         ),
 
