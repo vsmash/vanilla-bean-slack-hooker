@@ -88,6 +88,9 @@ wordpress plugins site.
 == Changelog ==
 
 == Upgrade Notice ==
+= 5.2.0 =
+- Added support for email notifications
+
 = 5.1.7 =
 - Admin menu bugfix
 

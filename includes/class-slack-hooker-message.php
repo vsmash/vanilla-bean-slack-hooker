@@ -66,9 +66,11 @@ class Slack_Hooker_Message
 
         $this->processEndpoints();
         if(!is_array($this->endpoints) || count($this->endpoints)<1){return false;}
+        // look for username in the payload or use the default
         if((!isset($this->payload['username']))&&isset($this->options['default_username'])){
             $this->payload['username'] = $this->options['default_username'];
         }
+        // look for emoji in the payload or use the default
         if((!isset($this->payload['icon_emoji']))&&isset($this->options['default_icon'])){
             $this->payload['icon_emoji']=$this->options['default_icon'];
         }
@@ -92,6 +94,13 @@ class Slack_Hooker_Message
             }
             $this->apiargs['body'] = array('payload' => json_encode($this->payload));
             if($this->canSend($endpoint['url'])){
+                // if $endpoint['url'] is an email address, send it to the email address
+                $isemail =filter_var($endpoint['url'], FILTER_VALIDATE_EMAIL);
+
+                if($isemail){
+                    $output[] = wp_mail($endpoint['url'], $this->payload['username'], $this->payload['text']);
+                    continue;
+                }
                 if($this->options['omit_cron']=='yes') {
                     $output[] = wp_remote_post($endpoint['url'], $this->apiargs);
                 }else{
