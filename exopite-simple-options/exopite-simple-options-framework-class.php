@@ -1700,7 +1700,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 		}
 
-		public function get_menu_item( $section, $active = '', $force_hidden ) {
+		public function get_menu_item( $section, $active = '', $force_hidden=false ) {
 
 			// $active = '';
 			// if ( $section === reset( $this->fields ) ) {
