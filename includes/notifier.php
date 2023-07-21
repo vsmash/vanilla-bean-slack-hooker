@@ -119,7 +119,7 @@ if (!function_exists('\VanillaBeans\SlackHooker\plugin_upgrader')) {
 
 
         $endpoints = $obj['endpoints']??false;
-        $endpointOptions = $obj['endpointOptions']??'defaults';
+        $endpointOptions = $obj['endpointOptions']??'default';
         return \Vanilla_Bean_Slack_Hooker::notification_send($message, $endpoints, $endpointOptions);
     }
 }
