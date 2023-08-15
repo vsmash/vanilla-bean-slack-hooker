@@ -70,7 +70,12 @@ if (!function_exists('\VanillaBeans\SlackHooker\build_attachment_message')) {
     function build_attachment_message($color, $status, $plugin)
     {
         $current_user = wp_get_current_user();
-        $username = empty($current_user) ? 'System' : $current_user->display_name;
+        // is $current_user an object?
+        $username = empty($current_user) ? 'System' : $current_user->display_name??'System';
+        // is the current user WP-CLI?
+        if (defined('WP_CLI') && WP_CLI) {
+            $username = 'WP-CLI';
+        }
         $message = array(
             "color" => $color,
             "pretext" => "Plugin " . $status . " on " . get_site_url() . " by " . $username,
@@ -112,14 +117,24 @@ if (!function_exists('\VanillaBeans\SlackHooker\plugin_upgrader')) {
 
         $colour = $obj['colours'][$upgrader['action']];
         $current_user = wp_get_current_user();
-        $username = empty($current_user) ? 'System' : $current_user->display_name;
+        // is $current_user an object?
+        $username = empty($current_user) ? 'System' : $current_user->display_name??'System';
+
+
+
+
         $plugin = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin->plugin_info(), false);
 
         $message = build_attachment_message($colour,$upgrader['action'],$plugin);
 
-
+        error_log("\033[0;33m attachment message done \033[0m");
+        // if $obj has no array key 'endpoints' assign false to $endpoints
         $endpoints = $obj['endpoints']??false;
+
+
         $endpointOptions = $obj['endpointOptions']??'default';
+
+
         return \Vanilla_Bean_Slack_Hooker::notification_send($message, $endpoints, $endpointOptions);
     }
 }

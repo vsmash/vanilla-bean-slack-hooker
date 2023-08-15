@@ -129,11 +129,12 @@ class Slack_Hooker_Message
         $defaults = $this->options['defaultendpoints'];
         $eps = $this->endpoints;
         // if endpointOptions is not set or endpoint options = 'default' $eps=defaults
-        if (!isset($this->endpointOptions) || $this->endpointOptions == 'default') {
+        if (!isset($this->endpointOptions) || $this->endpointOptions == 'default' || $this->endpointOptions == 'defaults') {
             $eps = $defaults;
         } elseif($this->endpointOptions=='add'&&is_array($eps)&&is_array($defaults)) {
             $eps = array_merge($eps, $defaults);
         }
+
         if(!is_array($eps)){return false;}
         $formattedEndpoints = array();
 
@@ -162,6 +163,9 @@ class Slack_Hooker_Message
             }
             $formattedEndpoints[]=$epx;
         }
+        error_log("\033[0;53m");
+        error_log(print_r($formattedEndpoints,true));
+        error_log("\033[0m");
         $this->endpoints = $formattedEndpoints;
     }
 

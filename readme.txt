@@ -5,7 +5,7 @@ Tags: slack, webhook, message, api, alerts
 Requires at least: 3.4
 Tested up to: 6.2
 PHP Tested up to: 8.1
-Stable tag: 5.2.13
+Stable tag: 5.2.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,9 @@ wordpress plugins site.
 5. Screenshot of Notification choices
 
 == Changelog ==
+= 5.2.14 =
+- Bugfix - fixed issue with default channel reference having typo resulting in plugin upgrades notificaitons not working
+
 = 5.2.11 =
 - Bugfix - fixed issue with default channel reference having typo resulting in plugin upgrades notificaitons not working
 
