@@ -177,6 +177,7 @@ class Vanilla_Bean_Slack_Hooker {
         $this->loader->add_action( 'activated_plugin', $plugin_admin, 'plugin_activated', 999 );
         $this->loader->add_action( 'deactivated_plugin', $plugin_admin, 'plugin_deactivated', 999 );
         $this->loader->add_action( 'delete_plugin', $plugin_admin, 'plugin_deleted', 999 );
+        //$this->loader->add_action( 'upgrader_process_complete', $plugin_admin, 'upgrader_process_complete', 999, 2 );
     }
 
 	/**
@@ -195,7 +196,6 @@ class Vanilla_Bean_Slack_Hooker {
         $this->loader->add_action( 'transition_post_status', $plugin_public, 'post_statuschanged', 999, 3 );
         $this->loader->add_action( 'wp_insert_comment', $plugin_public, 'comment_inserted', 999, 2 );
         $this->loader->add_action( 'woocommerce_payment_complete', $plugin_public, 'woocommerce_payment_complete' );
-
 	}
 
 	/**
@@ -247,7 +247,7 @@ class Vanilla_Bean_Slack_Hooker {
         }
     }
 
-    public static function notification_send($message, $endpoints = false, $endpointOptions='default')
+    public static function notification_send($message, $endpoints = false, $endpointOptions='defaults')
     {
 
         $msg = new Slack_Hooker_Message();

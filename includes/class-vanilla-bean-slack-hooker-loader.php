@@ -126,7 +126,7 @@ class Vanilla_Bean_Slack_Hooker_Loader {
 			add_action( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
 		}
 
-        add_action('upgrader_process_complete', '\VanillaBeans\SlackHooker\plugin_upgrader', 9999, 2);
+         add_action('upgrader_process_complete', '\VanillaBeans\SlackHooker\plugin_upgrader', 9999, 2);
 	}
 
 }

@@ -694,6 +694,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
                     'id'          => 'notifications',
                     'type'        => 'accordion',
                     //'title'       => esc_html__( 'Accordion', 'plugin-name' ),
+                    //'title'       => esc_html__( 'Accordion', 'plugin-name' ),
                     'options' => array(
                         'allow_all_open' => false,  // optional, minimum one is always open
                     ),
@@ -830,6 +831,28 @@ class Vanilla_Bean_Slack_Hooker_Admin {
         $this->sendPluginMessage('#ff0000','deleted','Deleted',$plugin_file);
     }
 
+    // plugin installed or upgraded
+    public function upgrader_process_complete($plugin_file, $upgrader){
+        if (!isset($upgrader['type'], $upgrader['action']) || $upgrader['type'] != 'plugin' || ($upgrader['action'] != 'install'&& $upgrader['action'] != 'update')) {
+            return false;
+        }
+
+        $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
+        if(!isset($options['notifications']['plugin_change']['tabs'])){
+            return false;
+        }
+        $obj = $options['notifications']['plugin_change']['tabs'];
+        if($obj['plugin_change_onoff']!='yes'){
+            return false;
+        }
+        $name = get_plugin_data($upgrader['plugins'][0]);
+
+        $colour = $obj['colours'][$upgrader['action']];
+
+        $this->sendPluginMessage($colour,$upgrader['action'],$upgrader['action'], $name);
+    }
+
+
     // sets attachment colour
     private function get_colour($plug,$default,$index){
         return $plug['colours'][$index] ?? $default;
@@ -839,7 +862,16 @@ class Vanilla_Bean_Slack_Hooker_Admin {
     public static function build_plugin_message($color,$status,$plugin_file){
         $current_user = wp_get_current_user();
         $username = empty($current_user) ? 'System' : $current_user->display_name;
+        // if $plugin_file is a string, then it's a plugin file name
+        // if it's an array, then it's a plugin data array
+        $plugin_name = is_array($plugin_file)? $plugin_file['Name'] : get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin_file.'', false)['Name'];
+
+        if(is_array($plugin_file)){
+            $plugin = $plugin_file;
+        }else{
             $plugin = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin_file.'', false);
+        }
+
         $message = array(
             "color" => $color,
             "pretext" => "Plugin ".$status." on " . get_site_url() . " by " . $username,
@@ -855,6 +887,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
         );
         return $message;
     }
+
 
 
 }
