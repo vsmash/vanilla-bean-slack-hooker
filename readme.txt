@@ -86,6 +86,9 @@ wordpress plugins site.
 5. Screenshot of Notification choices
 
 == Changelog ==
+= 5.2.18 =
+- Tested with wordpress 6.2 and php 8.2
+
 = 5.2.14 =
 - Bugfix - fixed issue with default channel reference having typo resulting in plugin upgrades notificaitons not working
 
