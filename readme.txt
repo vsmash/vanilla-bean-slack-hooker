@@ -3,7 +3,7 @@ Contributors: vsmash
 Donate link: http://www.velvary.com.au/vanilla-beans/wordpress/slack-hooker/
 Tags: slack, webhook, message, api, alerts
 Requires at least: 3.4
-Tested up to: 6.2
+Tested up to: 6.5
 PHP Tested up to: 8.1
 Stable tag: 5.3.0
 License: GPLv2 or later
@@ -86,7 +86,7 @@ wordpress plugins site.
 5. Screenshot of Notification choices
 
 == Changelog ==
-= 5.3.0 =
+= 5.3.1 =
 - Tested with wordpress 6.5 and php 8.2
 
 = 5.2.14 =
