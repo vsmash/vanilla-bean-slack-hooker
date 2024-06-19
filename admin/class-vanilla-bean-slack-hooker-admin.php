@@ -66,7 +66,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
     private function buildEndpointOverrides(){
         $or =
             array(
-                array(
+            array(
                     'id'      => 'endpointOptions',
                     'type'    => 'radio',
                     'title'   => 'Endpoints',
