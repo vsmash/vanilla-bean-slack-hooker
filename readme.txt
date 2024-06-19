@@ -86,7 +86,7 @@ wordpress plugins site.
 5. Screenshot of Notification choices
 
 == Changelog ==
-= 5.2.18 =
+= 5.2.19 =
 - Tested with wordpress 6.5 and php 8.2
 
 = 5.2.14 =
