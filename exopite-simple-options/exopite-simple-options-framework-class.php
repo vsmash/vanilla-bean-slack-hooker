@@ -119,6 +119,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 		public $version;
 
+		// public $debug = true;
 		public $debug = false;
 
 		/**
@@ -558,7 +559,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 		// for TinyMCE Code Plugin
 		public function mce_external_plugins( $plugins ) {
-			$plugins['code'] = SLACKHOOKER_DIR_URL.'/exopite-simple-options/assets/plugin.code.min.js';
+			$url             = $this->get_url( $this->dirname );
+			$base            = trailingslashit( join( '/', array( $url, 'assets' ) ) );
+			$plugins['code'] = $base . 'plugin.code.min.js';
 			return $plugins;
 		}
 
@@ -659,14 +662,26 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
          *
          * @return string   the generated url
          */
-        public function get_url( $path = '' ) {
-            $url = $this->str_replace_first(
-                wp_normalize_path( untrailingslashit( ABSPATH ) ),
-                site_url(),
-                $path
-            );
-            return $url;
-        }
+		public function get_url($path = '')
+		{
+			// Normalize the ABSPATH and path
+			$abspath = wp_normalize_path(untrailingslashit(ABSPATH));
+			$normalized_path = wp_normalize_path($path);
+
+			// Ensure the path starts with the exact ABSPATH
+			if (strpos($normalized_path, $abspath . '/') === 0) {
+				// Replace ABSPATH with site_url(), ensuring we only replace the exact match
+				$url = str_replace($abspath, site_url(), $normalized_path);
+			} else {
+				// If ABSPATH isn't in the path, just return the path appended to the site_url
+				// remove characters from the end of the string until the first slash
+				$modified_path = preg_replace('/\/[^\/]*$/', '', $abspath);
+				$url = str_replace($modified_path, site_url(), $normalized_path);
+				error_log('ABSPATH not in path : ' . $url);
+			}
+			return $url;
+		}
+
 
 		public function locate_template( $type ) {
 
@@ -707,7 +722,17 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				// TRUE: if Settings link is not defined, lets create one
 				if ( $this->config['settings_link'] ) {
 
-					$settings_link = sanitize_file_name( $this->config['settings-link'] );
+					$options_base_file_name = $this->config['parent'] ;
+
+					$options_page_id = $this->unique;
+                    $concat="?";
+                    // if base contains ? then append with and instead of ?
+                    if (strpos($options_base_file_name, '?') !== false) {
+                        $concat="&";
+                    }
+
+
+					$settings_link = "{$options_base_file_name}{$concat}page={$options_page_id}";
 
 					$settings_link_array = array(
 						'<a href="' . admin_url( $settings_link ) . '">' . __( 'Settings', '' ) . '</a>',
@@ -806,7 +831,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				'capability'    => 'manage_options',
 				'settings_link' => true,
 				'tabbed'        => true,
-				'position'      => 100,
+				'position'      => 8,
 				'icon'          => '',
 				'search_box'    => true,
 				'multilang'     => true,
@@ -940,7 +965,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			 */
 			if ( $this->is_menu_page_loaded() || $this->is_metabox_enabled_post_type() ) :
 
-				$url  = SLACKHOOKER_DIR_URL.'exopite-simple-options';
+				$url  = $this->get_url( $this->dirname );
 				$base = trailingslashit( join( '/', array( $url, 'assets' ) ) );
 
 				if ( ! wp_style_is( 'font-awesome' ) || ! wp_style_is( 'font-awesome-470' ) || ! wp_style_is( 'FontAwesome' ) ) {
@@ -1692,10 +1717,12 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 		public function get_menu_item_icons( $section ) {
 
-			if ( strpos( $section['icon'], 'dashicon' ) !== false ) {
+			if ( isset($section['icon']) && strpos('dashicon',  $section['icon'] ) !== false ) {
 				echo '<span class="exopite-sof-nav-icon dashicons-before ' . $section['icon'] . '"></span>';
-			} elseif ( strpos( $section['icon'], 'fa' ) !== false ) {
+			} elseif ( isset($section['icon']) && strpos( $section['icon'], 'fa' ) !== false ) {
 				echo '<span class="exopite-sof-nav-icon fa-before ' . $section['icon'] . '" aria-hidden="true"></span>';
+			}else{
+				echo '<span class="exopite-sof-nav-icon fa-before" aria-hidden="true"></span>';
 			}
 
 		}

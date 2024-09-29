@@ -24,6 +24,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Fields' ) ) {
 		public $lang_current;
 		public $languages;
 		public $is_multilang;
+        public $google_fonts;
 
 		public function __construct( $field = array(), $value = null, $unique = '', $config = array() ) {
 
@@ -218,7 +219,14 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Fields' ) ) {
 					if ( $value === 'only-key' ) {
 						$atts .= ' ' . $key;
 					} else {
-						$atts .= ' ' . $key . '="' . $value . '"';
+                        // if there are double quotes in the value
+                        if ( strpos( $value, '"' ) !== false ) {
+                            $atts .= ' ' . $key . "='" . $value . "'";
+                        } else {
+                            $atts .= ' ' . $key . "='" . $value . "'";
+
+//						$atts .= ' ' . $key . '="' . $value . '"';
+					    }
 					}
 				}
 			}
@@ -273,7 +281,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Fields' ) ) {
 
 		}
 
-		public static function do_enqueue( $styles_scripts, $args ) {
+		public static function do_enqueue( $styles_scripts, $args, $localization_data = array() ) {
 
 			foreach ( $styles_scripts as $resource ) {
 
@@ -310,7 +318,10 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Fields' ) ) {
 				}
 
 				$function( $resource['name'], $resource_url, $resource['dependency'], $version, $resource['attr'] );
-
+                // Localize script if it's a script type and localization data is provided
+                if ( $resource['type'] === 'script' && ! empty( $localization_data ) ) {
+                    wp_localize_script( $resource['name'], $localization_data['object_name'], $localization_data['data'] );
+                }
 			}
 
 		}
