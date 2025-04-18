@@ -42,7 +42,8 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_attached' ) ) {
 
 				if ( count( $images ) == 0 ) {
 
-					printf( esc_attr__( 'There is no attachment with type %s for this %s.', 'exopite-sof' ), $this->field['options']['type'], esc_html( $post_type->labels->singular_name ) );
+					// translators: %1$s: attachment type, %2$s: post type singular name
+					printf( esc_attr__( 'There is no attachment with type %1$s for this %2$s.', 'vanilla-bean-slack-hooker' ), $this->field['options']['type'], esc_html( $post_type->labels->singular_name ) );
 
 				} else {
 

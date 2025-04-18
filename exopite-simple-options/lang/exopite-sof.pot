@@ -188,3 +188,67 @@ msgstr ""
 #: fields/video.php:74
 msgid "Add Video"
 msgstr ""
+
+#: fields/compass.php:25
+msgid "N"
+msgstr ""
+
+#: fields/compass.php:26
+msgid "NNE"
+msgstr ""
+
+#: fields/compass.php:27
+msgid "NE"
+msgstr ""
+
+#: fields/compass.php:28
+msgid "ENE"
+msgstr ""
+
+#: fields/compass.php:29
+msgid "E"
+msgstr ""
+
+#: fields/compass.php:30
+msgid "ESE"
+msgstr ""
+
+#: fields/compass.php:31
+msgid "SE"
+msgstr ""
+
+#: fields/compass.php:32
+msgid "SSE"
+msgstr ""
+
+#: fields/compass.php:33
+msgid "S"
+msgstr ""
+
+#: fields/compass.php:34
+msgid "SSW"
+msgstr ""
+
+#: fields/compass.php:35
+msgid "SW"
+msgstr ""
+
+#: fields/compass.php:36
+msgid "WSW"
+msgstr ""
+
+#: fields/compass.php:37
+msgid "W"
+msgstr ""
+
+#: fields/compass.php:38
+msgid "WNW"
+msgstr ""
+
+#: fields/compass.php:39
+msgid "NW"
+msgstr ""
+
+#: fields/compass.php:40
+msgid "NNW"
+msgstr ""

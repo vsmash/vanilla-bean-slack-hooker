@@ -251,7 +251,7 @@ jQuery.fn.findExclude = function (selector, mask, result) {
                     // The array of form data takes the following form:
                     // [ { name: 'username', value: 'jresig' }, { name: 'password', value: 'secret' } ]
                      // https://jsonformatter.curiousconcept.com/
-
+                    //
                     $that.find('[name]').not(':disabled').each(function (index, el) {
                         if ($(el).prop('nodeName') == 'INPUT' && $(el).attr('type') == 'checkbox' && !$(el).is(":checked") && !$(el).attr('name').endsWith('[]')) {
                             // not checked checkbox
@@ -273,14 +273,16 @@ jQuery.fn.findExclude = function (selector, mask, result) {
                             };
                             arr.push(element);
                         }
+
                     });
 
                     // return false to cancel submit
                 },
-                success: function () {
+                success: function (response) {
                     $submitButtons.val(currentButtonString).attr('disabled', false);
                     $ajaxMessage.html(savedButtonString).addClass('success show');
                     $submitButtons.blur();
+                    console.log('exopiteSaveOptionsAJAX response: ', response);
                     setTimeout(function () {
                         // $ajaxMessage.fadeOut( 400 );
                         $ajaxMessage.removeClass('show');
@@ -288,6 +290,7 @@ jQuery.fn.findExclude = function (selector, mask, result) {
                 },
 
                 error: function (data) {
+                    console.log('error data', data);
                     $submitButtons.val(currentButtonString).attr('disabled', false);
                     $ajaxMessage.html('Error! See console!').addClass('error show');
                 },

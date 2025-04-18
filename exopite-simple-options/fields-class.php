@@ -227,7 +227,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Fields' ) ) {
 
 //						$atts .= ' ' . $key . '="' . $value . '"';
 					    }
-					}
+                    }
 				}
 			}
 
@@ -249,7 +249,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Fields' ) ) {
 
 			$value = maybe_unserialize( $value );
 			if ( is_array( $value ) && in_array( $current, $value ) ) {
-				$result = ' ' . $type . '="' . $type . '"';
+                $result = ' ' . $type . '="' . $type . '"';
 			} else if ( $value == $current ) {
 				$result = ' ' . $type . '="' . $type . '"';
 			} else {

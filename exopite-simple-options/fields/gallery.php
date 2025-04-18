@@ -22,9 +22,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_gallery' ) ) {
 			echo $this->element_prepend();
 
 			$defaults = array(
-				'add_button' => esc_attr__( 'Add to gallery', 'exopite-sof' ),
-				'media_frame_title' => esc_attr__( 'Select images for gallery', 'exopite-sof' ),
-				'media_frame_button' => esc_attr__( 'Add', 'exopite-sof' ),
+				'add_button' => esc_attr__( 'Add to gallery', 'vanilla-bean-slack-hooker' ),
+				'media_frame_title' => esc_attr__( 'Select images for gallery', 'vanilla-bean-slack-hooker' ),
+				'media_frame_button' => esc_attr__( 'Add', 'vanilla-bean-slack-hooker' ),
 				'media_type' => 'image',
 			);
 
