@@ -29,8 +29,19 @@
 if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_group' ) ) {
 	class Exopite_Simple_Options_Framework_Field_group extends Exopite_Simple_Options_Framework_Fields {
 
+        public $group_title;
+        public $is_repeater;
+        public $is_accordion;
+        public $is_accordion_closed;
+        public $limit;
+        public $is_multilang;
+        public $is_cloneable;
+        public $is_sortable;
+
 		public function __construct( $field, $value = '', $unique = '', $config = array() ) {
 			parent::__construct( $field, $value, $unique, $config );
+
+
 
 			$defaults = array(
 				'group_title'  	=> esc_attr( 'Group Title', 'exopite-sof' ),
@@ -347,7 +358,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_group' ) ) {
 
 				echo '</div>'; // exopite-sof-cloneable__wrapper
 
-				echo '<div class="exopite-sof-cloneable-data" data-unique-id="' . $unique_id . '" data-limit="' . $this->field['options']['limit'] . '">' . esc_attr__( 'Max items:', 'exopite-sof' ) . ' ' . $this->field['options']['limit'] . '</div>';
+				echo '<div class="exopite-sof-cloneable-data" data-unique-id="' . $unique_id . '" data-limit="' . $this->field['options']['limit'] . '">' . esc_attr__( 'Max items:', 'vanilla-bean-slack-hooker' ) . ' ' . $this->field['options']['limit'] . '</div>';
 
 				echo '<a href="#" class="button button-primary exopite-sof-cloneable--add">' . $this->field['options']['button_title'] . '</a>';
 

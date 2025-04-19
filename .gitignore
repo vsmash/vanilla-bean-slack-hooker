@@ -50,3 +50,6 @@ Thumbs.db
 
 dev.log
 dev.csv
+/vendor/
+/tutorials/
+/tutorials/

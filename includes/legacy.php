@@ -41,26 +41,26 @@ if(function_exists('\VanillaBeans\vanillabeans_settings')){
             <ul>
                 <li>
                     <?php if(defined( 'VBEANERRORMAILER_PLUGIN_VERSION' )){
-                        echo('<a href="'.admin_url().'admin.php?page=vanilla-bean-errormailer/vanillabean-errormailer.php">Error Mailer</a> (installed)');
+                        echo('<a href="' . esc_url( admin_url() ) . 'admin.php?page=vanilla-bean-errormailer/vanillabean-errormailer.php">Error Mailer</a> (installed)');
                     }else{
-                        echo('<a href="'.admin_url().'plugin-install.php?tab=search&type=term&s=vanilla+bean+error+mailer">Error Mailer</a>');
+                        echo('<a href="' . esc_url( admin_url() ) . 'plugin-install.php?tab=search&type=term&s=vanilla+bean+error+mailer">Error Mailer</a>');
 
                     }?>
                     <div class="small-text">Facilitates email notification of php errors on your site. Configurable to avoid unnecessary spamming of known errors.</div>
                 </li>
                 <li>
                     <?php if(defined( 'VBEANTHEMELOGIN_PLUGIN_VERSION' )){
-                        echo('<a href="'.admin_url().'admin.php?page=vanilla-bean-themelogin/vanilla-bean-themelogin.php">Theme Login</a> (installed)');
+                        echo('<a href="' . esc_url( admin_url() ) . 'admin.php?page=vanilla-bean-themelogin/vanilla-bean-themelogin.php">Theme Login</a> (installed)');
                     }else {
-                        echo('<a href="'.admin_url().'plugin-install.php?tab=search&type=term&s=vanilla+bean+theme+login">Theme Login</a>');
+                        echo('<a href="' . esc_url( admin_url() ) . 'plugin-install.php?tab=search&type=term&s=vanilla+bean+theme+login">Theme Login</a>');
                     }?>
                     <div class="small-text">Themify your login and password recovery pages.</div>
                 </li>
                 <li>
                     <?php if(defined( 'VBEANFAVICON_PLUGIN_VERSION' )){
-                        echo('<a href="'.admin_url().'admin.php?page=vanilla-bean-icon-setter/vanilla-bean-icon-setter.php">Icon Setter</a> (installed)');
+                        echo('<a href="' . esc_url( admin_url() ) . 'admin.php?page=vanilla-bean-icon-setter/vanilla-bean-icon-setter.php">Icon Setter</a> (installed)');
                     }else {
-                        echo('<a href="'.admin_url().'plugin-install.php?tab=search&type=term&s=vanilla+bean+icon+setter">Icon Setter</a>');
+                        echo('<a href="' . esc_url( admin_url() ) . 'plugin-install.php?tab=search&type=term&s=vanilla+bean+icon+setter">Icon Setter</a>');
                     }?>
                     <div class="small-text">Add your site's icon to each page, and across all devices.</div>
 
@@ -444,7 +444,7 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
                                                 "&amp;TB_iframe=true&amp;width=600&amp;height=550" );
 
                                             /* translators: 1: Plugin name and version. */
-                                            $action_links[] = '<a href="' . esc_url( $details_link ) . '" class="thickbox" aria-label="' . esc_attr( sprintf("More information about %s", $name ) ) . '" data-title="' . esc_attr( $name ) . '">' . __( 'More Details' ) . '</a>';
+                                            $action_links[] = '<a href="' . esc_url( $details_link ) . '" class="thickbox" aria-label="' . esc_attr( sprintf("More information about %s", $name ) ) . '" data-title="' . esc_attr( $name ) . '">' . __( 'More Details', 'vanilla-bean-slack-hooker' ) . '</a>';
                                             $action_links = array();
                                             if (current_user_can( "install_plugins") || current_user_can("update_plugins"))
                                             {
@@ -455,19 +455,19 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
                                                         if ( $status["url"] )
                                                         {
                                                             /* translators: 1: Plugin name and version. */
-                                                            $action_links[] = '<a class="install-now button" href="' . $status['url'] . '" aria-label="' . esc_attr( sprintf("Install %s now", $name ) ) . '">' . __( 'Install Now' ) . '</a>';
+                                                            $action_links[] = '<a class="install-now button" href="' . $status['url'] . '" aria-label="' . esc_attr( sprintf("Install %s now", $name ) ) . '">' . __( 'Install Now', 'vanilla-bean-slack-hooker' ) . '</a>';
                                                         }
                                                         break;
                                                     case "update_available":
                                                         if ($status["url"])
                                                         {
                                                             /* translators: 1: Plugin name and version */
-                                                            $action_links[] = '<a class="button" href="' . $status['url'] . '" aria-label="' . esc_attr( sprintf( "Update %s now", $name ) ) . '">' . __( 'Update Now' ) . '</a>';
+                                                            $action_links[] = '<a class="button" href="' . $status['url'] . '" aria-label="' . esc_attr( sprintf( "Update %s now", $name ) ) . '">' . __( 'Update Now', 'vanilla-bean-slack-hooker' ) . '</a>';
                                                         }
                                                         break;
                                                     case "latest_installed":
                                                     case "newer_installed":
-                                                        $action_links[] = '<span class="pixelplug"><span class="button button-disabled '.$plugin["slug"] .'" title="' . esc_attr__( "This plugin is already installed and is up to date" ) . ' ">' . _x( 'Installed', 'plugin' ) . '</span>';
+                                                        $action_links[] = '<span class="pixelplug"><span class="button button-disabled '.$plugin["slug"] .'" title="' . esc_attr__( "This plugin is already installed and is up to date", 'vanilla-bean-slack-hooker' ) . ' ">' . _x( 'Installed', 'plugin', 'vanilla-bean-slack-hooker' ) . '</span>';
                                                         break;
                                                 }
                                             }
@@ -480,16 +480,16 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
                                                         </a>
                                                         <div class="name column-name">
                                                             <h4>
-                                                                <a href="<?php echo esc_url( $details_link ); ?>" class="thickbox"><?php echo $title; ?></a>
+                                                                <a href="<?php echo esc_url( $details_link ); ?>" class="thickbox"><?php echo esc_html( $title ); ?></a>
                                                             </h4>
                                                         </div>
                                                         <div class="desc column-description">
                                                             <p>
-                                                                <?php echo $description; ?>
+                                                                <?php echo esc_html( $description ); ?>
                                                             </p>
                                                             <p class="authors">
                                                                 <cite>
-                                                                    By <?php echo $author;?>
+                                                                    By <?php echo esc_html( $author );?>
                                                                 </cite>
                                                             </p>
                                                         </div>
@@ -500,7 +500,8 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
                                                                 <?php
                                                                 if ($action_links)
                                                                 {
-                                                                    echo implode("</li><li>", $action_links);
+                                                                    // Each $action_link is safe HTML built above
+                                                                    echo implode("</li><li>", array_map('wp_kses_post', $action_links));
                                                                 }
 
 
@@ -513,30 +514,32 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
                                                     <div class="vers column-rating">
                                                         <?php wp_star_rating( array( "rating" => $plugin["rating"], "type" => "percent", "number" => $plugin["num_ratings"] ) ); ?>
                                                         <span class="num-ratings">
-														(<?php echo number_format_i18n( $plugin["num_ratings"] ); ?>)
+														(<?php echo esc_html( number_format_i18n( $plugin["num_ratings"] ) ); ?>)
 													</span>
                                                     </div>
                                                     <div class="column-updated">
-                                                        <strong><?php _e("Last Updated:"); ?></strong> <span title="<?php echo esc_attr($plugin["last_updated"]); ?>">
-														<?php printf("%s ago", human_time_diff(strtotime($plugin["last_updated"]))); ?>
+                                                        <strong><?php echo esc_html__("Last Updated:", 'vanilla-bean-slack-hooker'); ?></strong> <span title="<?php echo esc_attr($plugin["last_updated"]); ?>">
+														<?php echo esc_html( human_time_diff(strtotime($plugin["last_updated"])) . ' ' . __('ago', 'vanilla-bean-slack-hooker') ); ?>
 													</span>
                                                     </div>
                                                     <div class="column-downloaded">
-                                                        <?php echo sprintf( _n("%s download", "%s downloads", $plugin["downloaded"]), number_format_i18n($plugin["downloaded"])); ?>
+                                                        <?php 
+                                                        // translators: %s: Number of downloads.
+                                                        echo esc_html( sprintf( _n("%s download", "%s downloads", $plugin["downloaded"], 'vanilla-bean-slack-hooker'), number_format_i18n($plugin["downloaded"]) ) ); ?>
                                                     </div>
                                                     <div class="column-compatibility">
                                                         <?php
                                                         if ( !empty($plugin["tested"]) && version_compare(substr($GLOBALS["wp_version"], 0, strlen($plugin["tested"])), $plugin["tested"], ">"))
                                                         {
-                                                            echo '<span class="compatibility-untested">' . __( "<strong>Untested</strong> with your version of WordPress" ) . '</span>';
+                                                            echo '<span class="compatibility-untested">' . esc_html__( "<strong>Untested</strong> with your version of WordPress", 'vanilla-bean-slack-hooker' ) . '</span>';
                                                         }
                                                         elseif (!empty($plugin["requires"]) && version_compare(substr($GLOBALS["wp_version"], 0, strlen($plugin["requires"])), $plugin["requires"], "<"))
                                                         {
-                                                            echo '<span class="compatibility-incompatible">' . __("Incompatible with your version of WordPress") . '</span>';
+                                                            echo '<span class="compatibility-incompatible">' . esc_html__("Incompatible with your version of WordPress", 'vanilla-bean-slack-hooker' ) . '</span>';
                                                         }
                                                         else
                                                         {
-                                                            echo '<span class="compatibility-compatible">' . __("Compatible with your version of WordPress") . '</span>';
+                                                            echo '<span class="compatibility-compatible">' . esc_html__("Compatible with your version of WordPress", 'vanilla-bean-slack-hooker' ) . '</span>';
                                                         }
                                                         ?>
                                                     </div>
