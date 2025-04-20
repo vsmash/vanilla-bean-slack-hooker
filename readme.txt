@@ -86,6 +86,11 @@ wordpress plugins site.
 5. Screenshot of Notification choices
 
 == Changelog ==
+= 5.4.6 =
+- securty update - removed unneeded files
+- tested with wordpress 6.8 and php 8.2
+- added input filtering for security reasons
+
 = 5.3.1 =
 - Tested with wordpress 6.5 and php 8.2
 
