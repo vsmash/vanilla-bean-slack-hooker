@@ -44,14 +44,14 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_group' ) ) {
 
 
 			$defaults = array(
-				'group_title'  	=> esc_attr( 'Group Title', 'exopite-sof' ),
+				'group_title'  	=> esc_attr( 'Group Title', 'vanilla-bean-slack-hooker' ),
 				'repeater'     	=> false,
 				'cloneable'    	=> true,
 				'sortable'   	=> true,
 				'accordion'    	=> true,
 				'closed'       	=> true,
 				'limit'        	=> 0,
-				'button_title' 	=> esc_attr( 'Add new', 'exopite-sof' ),
+				'button_title' 	=> esc_attr( 'Add new', 'vanilla-bean-slack-hooker' ),
 			);
 
 			$options = ( ! empty( $this->field['options'] ) ) ? $this->field['options'] : array();

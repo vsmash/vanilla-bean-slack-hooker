@@ -144,7 +144,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
 
                                 array(
                                     'icon'   => 'fa fa-star', // optional
-                                    'title'  => $tabtitle, 'vanilla-bean-slack-hooker',
+                                    'title'  => $tabtitle, $this->plugin_name,
                                     'fields' => array(
 
 
