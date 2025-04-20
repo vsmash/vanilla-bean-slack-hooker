@@ -29,9 +29,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_content' ) ) {
 				}
 			}
 
-			echo $this->element_before();
-			echo '<div' . $this->element_class() . $this->element_attributes() . '>' . $content . '</div>';
-			echo $this->element_after();
+			echo wp_kses($this->element_before(), $this->allowedTags);
+			echo '<div' . wp_kses($this->element_class() . $this->element_attributes(), $this->allowedTags) . '>' . wp_kses($content, $this->allowedTags) . '</div>';
+			echo wp_kses($this->element_after(), $this->allowedTags);
 
 		}
 

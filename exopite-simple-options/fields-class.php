@@ -26,6 +26,38 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Fields' ) ) {
 		public $is_multilang;
         public $google_fonts;
 
+        public $allowedTags = array(
+            'a' => array(
+                'href' => array(),
+                'title' => array(),
+                'target' => array(),
+                'rel' => array(),
+            ),
+            'abbr' => array('title' => array()),
+            'b' => array(),
+            'blockquote' => array('cite' => array()),
+            'br' => array(),
+            'cite' => array(),
+            'code' => array(),
+            'del' => array('datetime' => array()),
+            'em' => array(),
+            'i' => array(),
+            'img' => array(
+                'src' => array(),
+                'alt' => array(),
+                'title' => array(),
+                'width' => array(),
+                'height' => array(),
+            ),
+            'li' => array(),
+            'ol' => array(),
+            'p' => array(),
+            'q' => array('cite' => array()),
+            'span' => array('class' => array(), 'style' => array()),
+            'strong' => array(),
+            'ul' => array(),
+        );
+
 		public function __construct( $field = array(), $value = null, $unique = '', $config = array() ) {
 
 			$this->field        = $field;
@@ -60,6 +92,10 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Fields' ) ) {
 		}
 
 		abstract public function output();
+
+
+
+
 
 		public function element_before() {
 

@@ -63,7 +63,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 
 		public function output() {
 
-			echo $this->element_before();
+			echo wp_kses($this->element_before(), $this->allowedTags);
 
 			?>
             <!-- Fine Uploader Thumbnails template w/ customization
@@ -162,31 +162,31 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 
 			?>
             <div class="qq-template" <?php
-			echo 'data-filecount="' . $this->field['options']['filecount'] . '" ';
-			echo 'data-mimetypes="' . $allowed_mime_types . '" ';
-			echo 'data-maxsize="' . $maxsize . '" ';
-			echo ( $this->field['options']['attach'] && $this->config['type'] == 'metabox' ) ? 'data-postid="' . get_the_ID() . '" ' : '';
-			echo 'data-ajaxurl="' . site_url( 'wp-admin/admin-ajax.php' ) . '" ';
-			echo 'data-delete-enabled="' . $this->field['options']['delete-enabled'] . '" ';
-			echo 'data-delete-force-confirm="' . $this->field['options']['delete-force-confirm'] . '" ';
-			echo 'data-retry-enable-auto="' . $this->field['options']['retry-enable-auto'] . '" ';
-			echo 'data-retry-max-auto-attempts="' . $this->field['options']['retry-max-auto-attempts'] . '" ';
-			echo 'data-retry-auto-attempt-delay="' . $this->field['options']['retry-auto-attempt-delay'] . '" ';
-			echo 'data-auto-upload="' . $this->field['options']['auto-upload'] . '" ';
+			echo 'data-filecount="' . esc_attr($this->field['options']['filecount']) . '" ';
+			echo 'data-mimetypes="' . esc_attr($allowed_mime_types) . '" ';
+			echo 'data-maxsize="' . esc_attr($maxsize) . '" ';
+			echo ( $this->field['options']['attach'] && $this->config['type'] == 'metabox' ) ? 'data-postid="' . esc_attr(get_the_ID()) . '" ' : '';
+			echo 'data-ajaxurl="' . esc_url(site_url( 'wp-admin/admin-ajax.php' )) . '" ';
+			echo 'data-delete-enabled="' . esc_attr($this->field['options']['delete-enabled']) . '" ';
+			echo 'data-delete-force-confirm="' . esc_attr($this->field['options']['delete-force-confirm']) . '" ';
+			echo 'data-retry-enable-auto="' . esc_attr($this->field['options']['retry-enable-auto']) . '" ';
+			echo 'data-retry-max-auto-attempts="' . esc_attr($this->field['options']['retry-max-auto-attempts']) . '" ';
+			echo 'data-retry-auto-attempt-delay="' . esc_attr($this->field['options']['retry-auto-attempt-delay']) . '" ';
+			echo 'data-auto-upload="' . esc_attr($this->field['options']['auto-upload']) . '" ';
 			?>>
             </div>
             <div class="qq-template-info">
 				<?php
 
-				echo esc_attr__( 'Max amount of files: ', 'vanilla-bean-slack-hooker' ) . $this->field['options']['filecount'] . '<br>';
-				echo esc_attr__( 'Max file upload size: ', 'vanilla-bean-slack-hooker' ) . number_format( (float) ( Exopite_Simple_Options_Framework_Upload::file_upload_max_size() / 1048576 ), 2, '.', '' ) . 'Mb<br><br>';
+				echo esc_html__( 'Max amount of files: ', 'vanilla-bean-slack-hooker' ) . esc_html($this->field['options']['filecount']) . '<br>';
+				echo esc_html__( 'Max file upload size: ', 'vanilla-bean-slack-hooker' ) . esc_html(number_format( (float) ( Exopite_Simple_Options_Framework_Upload::file_upload_max_size() / 1048576 ), 2, '.', '' )) . 'Mb<br><br>';
 				// echo '<i style="font-size:.9em;">' . esc_attr__( 'To increase file upload limit in the standard built-in WordPress media uploader up as large as available disk space allows, you could use', 'vanilla-bean-slack-hooker' ) . ' <a target="_blank" href="' . admin_url() . 'plugin-install.php?tab=plugin-information&plugin=tuxedo-big-file-uploads">Tuxedo Big File Uploads</a> ' . esc_attr__( 'Plugin', 'vanilla-bean-slack-hooker' ) . '</i>';
 
 				?>
             </div>
 			<?php
 
-			echo $this->element_after();
+			echo wp_kses($this->element_after(), $this->allowedTags);
 
 		}
 

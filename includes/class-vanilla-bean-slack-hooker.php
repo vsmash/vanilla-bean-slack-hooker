@@ -294,13 +294,13 @@ class Vanilla_Bean_Slack_Hooker {
         // concatenate $urls and $extraurls with $channel
         if (!empty($urls)) {
             if (!empty($extraurls)) {
-                $urls = implode(',', $urls, $extraurls);
+                $urls = implode(',', array_merge((array)$urls, (array)$extraurls));
             }
-            $endpoints = explode($urls);
+            $endpoints = !empty($urls) ? explode(',', $urls) : array();
             if (!empty($channel)) {
                 $channel = str_replace("#", "", $channel);
-                foreach ($endpoints as $endpoint) {
-                    if (!strpos("#", $endpoint)) {
+                foreach ($endpoints as &$endpoint) {
+                    if ($endpoint && strpos($endpoint, "#") === false) {
                         $endpoint .= "#" . $channel;
                     }
                 }
@@ -312,7 +312,7 @@ class Vanilla_Bean_Slack_Hooker {
         //$msg->endpoints = $endpoints;
         $msg->payload = array(
             "username" => $username??false,
-            'icon_emoji' => $icon ? str_replace(':', '', $icon . '') : false,
+            'icon_emoji' => (!empty($icon)) ? str_replace(':', '', $icon) : false,
         );
         if (is_array($message)) {
             $msg->payload['attachments'] = array($message);

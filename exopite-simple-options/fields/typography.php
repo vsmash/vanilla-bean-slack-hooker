@@ -17,7 +17,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_typography' ) ) {
 
 		public function output() {
 
-			echo $this->element_before();
+			echo wp_kses($this->element_before(), $this->allowedTags);
 
 			$defaults_value = array(
 				'family'       => 'Arial',
@@ -61,7 +61,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_typography' ) ) {
 			$chosen_rtl    = ( is_rtl() && ! empty( $is_chosen ) ) ? 'chosen-rtl ' : '';
 
 			//Container
-			echo '<div class="exopite-sof-font-field exopite-sof-font-field-js" data-id="'.$this->field['id'].'">';
+			echo '<div class="exopite-sof-font-field exopite-sof-font-field-js" data-id="'.esc_attr($this->field['id']).'">';
 
 			if( is_object( $google_json ) ) {
 
@@ -74,19 +74,19 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_typography' ) ) {
 				$is_google = ( array_key_exists( $family_value, $googlefonts ) ) ? true : false;
 
 				echo '<label class="exopite-sof-typography-family">';
-				echo '<select name="'. $this->element_name( '[family]' ) .'" class="'. $is_chosen . $chosen_rtl .'exopite-sof-typo-family" data-atts="family"'. $this->element_attributes() .'>';
+				echo '<select name="'. esc_attr($this->element_name( '[family]' )) .'" class="'. esc_attr($is_chosen . $chosen_rtl) .'exopite-sof-typo-family" data-atts="family"'. wp_kses($this->element_attributes(), $this->allowedTags) .'>';
 
 				do_action( 'exopite_sof_typography_family', $family_value, $this );
 
 				echo '<optgroup label="'. esc_attr__( 'Web Safe Fonts', 'vanilla-bean-slack-hooker' ) .'">';
 				foreach ( $websafe_fonts as $websafe_value ) {
-					echo '<option value="'. $websafe_value .'" data-variants="'. implode( '|', $default_variants ) .'" data-type="websafe"'. selected( $websafe_value, $family_value, true ) .'>'. $websafe_value .'</option>';
+					echo '<option value="'. esc_attr($websafe_value) .'" data-variants="'. esc_attr(implode( '|', $default_variants )) .'" data-type="websafe"'. selected( $websafe_value, $family_value, true ) .'>'. esc_html($websafe_value) .'</option>';
 				}
 				echo '</optgroup>';
 
 				echo '<optgroup label="'. esc_attr__( 'Google Fonts', 'vanilla-bean-slack-hooker' ) .'">';
 				foreach ( $googlefonts as $google_key => $google_value ) {
-					echo '<option value="'. $google_key .'" data-variants="'. implode( '|', $google_value ) .'" data-type="google"'. selected( $google_key, $family_value, true ) .'>'. $google_key .'</option>';
+					echo '<option value="'. esc_attr($google_key) .'" data-variants="'. esc_attr(implode( '|', $google_value )) .'" data-type="google"'. selected( $google_key, $family_value, true ) .'>'. esc_html($google_key) .'</option>';
 				}
 				echo '</optgroup>';
 
@@ -99,9 +99,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_typography' ) ) {
 					$variants = ( $value['font'] === 'google' || $value['font'] === 'websafe' ) ? $variants : array( 'regular' );
 
 					echo '<label class="exopite-sof-typography-variant">';
-					echo '<select name="'. $this->element_name( '[variant]' ) .'" class="'. $is_chosen . $chosen_rtl .'exopite-sof-typo-variant" data-atts="variant">';
+					echo '<select name="'. esc_attr($this->element_name( '[variant]' )) .'" class="'. esc_attr($is_chosen . $chosen_rtl) .'exopite-sof-typo-variant" data-atts="variant">';
 					foreach ( $variants as $variant ) {
-						echo '<option value="'. $variant .'"'. $this->checked( $variant_value, $variant, 'selected' ) .'>'. $variant .'</option>';
+						echo '<option value="'. esc_attr($variant) .'"'. wp_kses($this->checked( $variant_value, $variant, 'selected' ), $this->allowedTags) .'>'. esc_html($variant) .'</option>';
 					}
 					echo '</select>';
 					echo '</label>';
@@ -167,10 +167,10 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_typography' ) ) {
 					}else {
 						$preview_text = 'Lorem ipsum dolor sit amet, pro ad sanctus admodum, vim at insolens appellantur. Eum veri adipiscing an, probo nonumy an vis.';
 					}
-					echo '<div class="exopite-sof-font-preview">'. $preview_text .'</div>';
+					echo '<div class="exopite-sof-font-preview">'. esc_html($preview_text) .'</div>';
 				}
 
-				echo '<input type="text" name="'. $this->element_name( '[font]' ) .'" class="exopite-sof-typo-font hidden" data-atts="font" value="'. $value['font'] .'" />';
+				echo '<input type="text" name="'. esc_attr($this->element_name( '[font]' )) .'" class="exopite-sof-typo-font hidden" data-atts="font" value="'. esc_attr($value['font']) .'" />';
 
 			} else {
 
@@ -181,7 +181,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_typography' ) ) {
 			//end container
 			echo '</div>';
 
-			echo $this->element_after();
+			echo wp_kses($this->element_after(), $this->allowedTags);
 
 		}
 
