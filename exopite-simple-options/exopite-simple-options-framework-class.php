@@ -212,10 +212,11 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		}
 
 		public function load_textdomain() {
-
-			$mofile = $this->get_mo_file();
-			load_textdomain( 'vanilla-bean-slack-hooker', $mofile );
-
+			// Hook into init to load textdomain at the correct time
+			add_action( 'init', function() {
+				$mofile = $this->get_mo_file();
+				load_textdomain( 'vanilla-bean-slack-hooker', $mofile );
+			});
 		}
 
 		protected function setup_multilang() {
@@ -676,14 +677,14 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			$normalized_path = wp_normalize_path($path);
 
 			// Ensure the path starts with the exact ABSPATH
-			if (strpos($normalized_path, $abspath . '/') === 0) {
+			if (!empty($normalized_path) && !empty($abspath) && strpos($normalized_path, $abspath . '/') === 0) {
 				// Replace ABSPATH with site_url(), ensuring we only replace the exact match
-				$url = str_replace($abspath, site_url(), $normalized_path);
+				$url = !empty($abspath) && !empty($normalized_path) ? str_replace($abspath, site_url(), $normalized_path) : $normalized_path;
 			} else {
 				// If ABSPATH isn't in the path, just return the path appended to the site_url
 				// remove characters from the end of the string until the first slash
-				$modified_path = preg_replace('/\/[^\/]*$/', '', $abspath);
-				$url = str_replace($modified_path, site_url(), $normalized_path);
+				$modified_path = !empty($abspath) ? preg_replace('/\/[^\/]*$/', '', $abspath) : '';
+				$url = !empty($modified_path) && !empty($normalized_path) ? str_replace($modified_path, site_url(), $normalized_path) : $normalized_path;
 				error_log('ABSPATH not in path : ' . $url);
 			}
 			return $url;
@@ -734,7 +735,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 					$options_page_id = $this->unique;
                     $concat="?";
                     // if base contains ? then append with and instead of ?
-                    if (strpos($options_base_file_name, '?') !== false) {
+                    if (!empty($options_base_file_name) && strpos($options_base_file_name, '?') !== false) {
                         $concat="&";
                     }
 
@@ -1671,9 +1672,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			if ( isset( $section['title'] ) && ! empty( $section['title'] ) ) {
 
 				$icon_before = '';
-				if ( strpos( $section_icon, 'dashicon' ) !== false ) {
+				if ( !empty($section_icon) && strpos( $section_icon, 'dashicon' ) !== false ) {
 					$icon_before = 'dashicons-before ';
-				} elseif ( strpos( $section_icon, 'fa' ) !== false ) {
+				} elseif ( !empty($section_icon) && strpos( $section_icon, 'fa' ) !== false ) {
 					$icon_before = 'fa-before ';
 				}
 
@@ -1725,9 +1726,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 		public function get_menu_item_icons( $section ) {
 
-			if ( isset($section['icon']) && strpos('dashicon',  $section['icon'] ) !== false ) {
+			if ( isset($section['icon']) && !empty($section['icon']) && strpos('dashicon',  $section['icon'] ) !== false ) {
 				echo '<span class="exopite-sof-nav-icon dashicons-before ' . $section['icon'] . '"></span>';
-			} elseif ( isset($section['icon']) && strpos( $section['icon'], 'fa' ) !== false ) {
+			} elseif ( isset($section['icon']) && !empty($section['icon']) && strpos( $section['icon'], 'fa' ) !== false ) {
 				echo '<span class="exopite-sof-nav-icon fa-before ' . $section['icon'] . '" aria-hidden="true"></span>';
 			}else{
 				echo '<span class="exopite-sof-nav-icon fa-before" aria-hidden="true"></span>';

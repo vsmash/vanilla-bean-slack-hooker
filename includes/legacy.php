@@ -489,7 +489,7 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
                                                             </p>
                                                             <p class="authors">
                                                                 <cite>
-                                                                    By <?php echo esc_html( $author );?>
+                                                                    By <?php echo wp_kses( $author, $plugins_allowedtags );?>
                                                                 </cite>
                                                             </p>
                                                         </div>
@@ -501,10 +501,8 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
                                                                 if ($action_links)
                                                                 {
                                                                     // Each $action_link is safe HTML built above
-                                                                    echo implode("</li><li>", array_map('wp_kses_post', $action_links));
+                                                                    echo wp_kses( implode("</li><li>", array_map('wp_kses_post', $action_links)), $plugins_allowedtags );
                                                                 }
-
-
                                                                 ?>
                                                             </li>
                                                         </ul>
@@ -531,7 +529,7 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
                                                         <?php
                                                         if ( !empty($plugin["tested"]) && version_compare(substr($GLOBALS["wp_version"], 0, strlen($plugin["tested"])), $plugin["tested"], ">"))
                                                         {
-                                                            echo '<span class="compatibility-untested">' . esc_html__( "<strong>Untested</strong> with your version of WordPress", 'vanilla-bean-slack-hooker' ) . '</span>';
+                                                            echo '<span class="compatibility-untested">' . wp_kses( "<strong>Untested</strong> with your version of WordPress", $plugins_allowedtags ) . '</span>';
                                                         }
                                                         elseif (!empty($plugin["requires"]) && version_compare(substr($GLOBALS["wp_version"], 0, strlen($plugin["requires"])), $plugin["requires"], "<"))
                                                         {

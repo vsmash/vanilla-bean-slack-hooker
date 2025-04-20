@@ -558,8 +558,8 @@ class Vanilla_Bean_Slack_Hooker_Admin {
             // 'tabbed'            => false,                        // is tabbed or not
                                                             // Note: if only one section then
                                                             // Tabs are disabled.
-            //'settings_link'     => array('https://www.velvary.com.au'),
-            'settings-link'     =>  'vanilla-bean-slack-hooker',
+            'settings_link'     => array('https://www.velvary.com.au'),
+            //'settings-link'     =>  'vanilla-bean-slack-hooker',
 
             'multilang'         => false,                         // Disable mutilang support, default: true
             'position'          => 3,

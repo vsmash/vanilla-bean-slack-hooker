@@ -208,7 +208,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Upload' ) ) {
 		 */
 		public static function add_attachment( $url, $filepath ) {
 
-			$updated_url = trim( substr( $url, strpos( $url, 'uploads/') + 8 ));
+			$updated_url = !empty($url) && strpos( $url, 'uploads/') !== false ? trim( substr( $url, strpos( $url, 'uploads/') + 8 )) : '';
 
 			$wp_upload_dir = wp_upload_dir();
 			$filename      = str_replace( $wp_upload_dir['url'] . '/', '', $url );
