@@ -18,7 +18,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_backup' ) ) {
 
 		public function output() {
 
-			echo wp_kses($this->element_before(), $this->allowedTags);
+			echo $this->element_before();
 
 			if ( $this->config['type'] == 'menu' ) {
 
@@ -38,26 +38,26 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_backup' ) ) {
 				}
 
 				echo '<textarea name="_nonce" class="exopite-sof__import"></textarea>';
-				echo '<small class="exopite-sof-info--small">( ' . esc_attr__( 'copy-paste your backup string here', 'vanilla-bean-slack-hooker' ) . ' )</small>';
-				echo '<a href="#" class="button button-primary exopite-sof-import-js" data-confirm="' . esc_attr__( 'Are you sure, you want to overwrite existing options?', 'vanilla-bean-slack-hooker' ) . '">' . esc_attr__( 'Import a Backup', 'vanilla-bean-slack-hooker' ) . '</a>';
+				echo '<small class="exopite-sof-info--small">( ' . esc_attr__( 'copy-paste your backup string here', 'exopite-sof' ) . ' )</small>';
+				echo '<a href="#" class="button button-primary exopite-sof-import-js" data-confirm="' . esc_attr__( 'Are you sure, you want to overwrite existing options?', 'exopite-sof' ) . '">' . esc_attr__( 'Import a Backup', 'exopite-sof' ) . '</a>';
 
 				echo '<hr />';
-				echo '<textarea name="_nonce" class="exopite-sof__export" readonly>' . esc_textarea($encoded_options) . '</textarea>';
-				echo '<a href="' . esc_url($export) . '" class="button button-primary" target="_blank">' . esc_attr__( 'Download Backup', 'vanilla-bean-slack-hooker' ) . '</a>';
+				echo '<textarea name="_nonce" class="exopite-sof__export" readonly>' . $encoded_options . '</textarea>';
+				echo '<a href="' . $export . '" class="button button-primary" target="_blank">' . esc_attr__( 'Download Backup', 'exopite-sof' ) . '</a>';
 
 				echo '<hr />';
-				echo '<small class="exopite-sof-info--small exopite-sof-info--warning">' . esc_attr__( 'Please be sure for reset all of framework options.', 'vanilla-bean-slack-hooker' ) . '</small>';
-				echo '<a href="#" class="button button-warning exopite-sof-reset-js" data-confirm="' . esc_attr__( 'Are you sure, you want to reset all options?', 'vanilla-bean-slack-hooker' ) . '">' . esc_attr__( 'Reset All Options', 'vanilla-bean-slack-hooker' ) . '</a>';
+				echo '<small class="exopite-sof-info--small exopite-sof-info--warning">' . esc_attr__( 'Please be sure for reset all of framework options.', 'exopite-sof' ) . '</small>';
+				echo '<a href="#" class="button button-warning exopite-sof-reset-js" data-confirm="' . esc_attr__( 'Are you sure, you want to reset all options?', 'exopite-sof' ) . '">' . esc_attr__( 'Reset All Options', 'exopite-sof' ) . '</a>';
 
-				echo '<div class="exopite-sof--data" data-admin="' . esc_url(admin_url( 'admin-ajax.php' )) . '" data-unique="' . esc_attr($this->unique) . '" data-wpnonce="' . esc_attr($nonce) . '"></div>';
+				echo '<div class="exopite-sof--data" data-admin="' . admin_url( 'admin-ajax.php' ) . '" data-unique="' . $this->unique . '" data-wpnonce="' . $nonce . '"></div>';
 
 			} else {
 
-				echo esc_html('This item only available in menu!') . '<br>';
+				echo 'This item only available in menu!<br>';
 
 			}
 
-			echo wp_kses($this->element_after(), $this->allowedTags);
+			echo $this->element_after();
 
 		}
 
@@ -73,7 +73,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_backup' ) ) {
 		 * Decode string for backup options
 		 */
 		function decode_string( $option ) {
-			return json_decode( sanitize_text_field($_POST['value']), true );
+			return json_decode( $_POST['value'], true );
 			// return unserialize( gzuncompress( stripslashes( call_user_func( 'base' . '64' . '_decode', rtrim( strtr( $option, '-_', '+/' ), '=' ) ) ) ) );
 		}
 

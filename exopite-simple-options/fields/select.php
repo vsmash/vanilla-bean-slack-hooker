@@ -77,9 +77,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_select' ) ) {
 
 		public function output() {
 
-			echo wp_kses($this->element_before(), $this->allowedTags);
+			echo $this->element_before();
 
-			echo wp_kses($this->element_prepend(), $this->allowedTags);
+			echo $this->element_prepend();
 
 			if ( isset( $this->field['options'] ) || isset( $this->field['query'] ) ) {
 
@@ -89,14 +89,14 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_select' ) ) {
 				$class      = $this->element_class();
 				$extra_name = ( isset( $this->field['attributes']['multiple'] ) ) ? '[]' : '';
 
-				echo '<select name="' . esc_attr($this->element_name( $extra_name )) . '"' . wp_kses($this->element_class() . $this->element_attributes(), $this->allowedTags) . '>';
+				echo '<select name="' . $this->element_name( $extra_name ) . '"' . $this->element_class() . $this->element_attributes() . '>';
 
-				echo ( isset( $this->field['default_option'] ) ) ? '<option value="">' . esc_html($this->field['default_option']) . '</option>' : '';
+				echo ( isset( $this->field['default_option'] ) ) ? '<option value="">' . $this->field['default_option'] . '</option>' : '';
 
 				if ( ! empty( $select ) ) {
 
 					foreach ( $select as $key => $value ) {
-						echo '<option value="' . esc_attr($key) . '" ' . wp_kses($this->checked( $this->element_value(), $key, 'selected' ), $this->allowedTags) . '>' . esc_html($value) . '</option>';
+						echo '<option value="' . $key . '" ' . $this->checked( $this->element_value(), $key, 'selected' ) . '>' . $value . '</option>';
 
 					}
 				}
@@ -105,9 +105,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_select' ) ) {
 
 			}
 
-			echo wp_kses($this->element_append(), $this->allowedTags);
+			echo $this->element_append();
 
-			echo wp_kses($this->element_after(), $this->allowedTags);
+			echo $this->element_after();
 
 		}
 
@@ -167,7 +167,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_select' ) ) {
 
 					if ( ! is_wp_error( $pages ) && ! empty( $pages ) ) {
 						foreach ( $pages as $page ) {
-							$select[ $page->ID ] = esc_html($page->post_title);
+							$select[ $page->ID ] = $page->post_title;
 						}
 					}
 
@@ -180,7 +180,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_select' ) ) {
 
 					if ( ! is_wp_error( $posts ) && ! empty( $posts ) ) {
 						foreach ( $posts as $post ) {
-							$select[ $post->ID ] = esc_html($post->post_title);
+							$select[ $post->ID ] = $post->post_title;
 						}
 					}
 
@@ -193,7 +193,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_select' ) ) {
 
 					if ( ! is_wp_error( $categories ) && ! empty( $categories ) && ! isset( $categories['errors'] ) ) {
 						foreach ( $categories as $category ) {
-							$select[ $category->term_id ] = esc_html($category->name);
+							$select[ $category->term_id ] = $category->name;
 						}
 					}
 
@@ -207,7 +207,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_select' ) ) {
 
 					if ( ! is_wp_error( $tags ) && ! empty( $tags ) ) {
 						foreach ( $tags as $tag ) {
-							$select[ $tag->term_id ] = esc_html($tag->name);
+							$select[ $tag->term_id ] = $tag->name;
 						}
 					}
 
@@ -220,7 +220,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_select' ) ) {
 
 					if ( ! is_wp_error( $menus ) && ! empty( $menus ) ) {
 						foreach ( $menus as $menu ) {
-							$select[ $menu->term_id ] = esc_html($menu->name);
+							$select[ $menu->term_id ] = $menu->name;
 						}
 					}
 
@@ -234,7 +234,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_select' ) ) {
 
 					if ( ! is_wp_error( $post_types ) && ! empty( $post_types ) ) {
 						foreach ( $post_types as $post_type ) {
-							$select[ $post_type ] = esc_html(ucfirst( $post_type ));
+							$select[ $post_type ] = ucfirst( $post_type );
 						}
 					}
 
@@ -254,7 +254,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_select' ) ) {
 
 					if ( ! is_wp_error( $users ) && ! empty( $users ) ) {
 						foreach ( $users as $user ) {
-							$select[ $user->{$key} ] = esc_html($user->{$value});
+							$select[ $user->{$key} ] = $user->{$value};
 						}
 					}
 

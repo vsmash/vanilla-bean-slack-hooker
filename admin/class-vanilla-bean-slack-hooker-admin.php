@@ -84,7 +84,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
             'type'    => 'group',
             'id'      => 'endpoints',
             'title'   => esc_html__( 'Specify additional/replacement endpoints here', 'vanilla-bean-slack-hooker' ),
-//            'help'       => esc_html__('Leave empty to use default endpoint(s).','vanilla-bean-slack-hooker').'<br />&nbsp;<br />'.esc_html__('Format can be endpoint or channel or both','vanilla-bean-slack-hooker').'<br />'.esc_html__('eg:','vanilla-bean-slack-hooker').'<br />'.esc_html__('https://yourendpoint','vanilla-bean-slack-hooker').'<br />'.esc_html__('yourchannel (uses default enpoint)','vanilla-bean-slack-hooker').'<br />'.esc_html__('https://yourendpoint#yourchannel','vanilla-bean-slack-hooker').'<br />'.esc_html__('https://yourendpoint##here','vanilla-bean-slack-hooker'),
+//            'help'       => esc_html__('Leave empty to use default endpoint(s).','vanilla-bean-slack-hooker').'<br />&nbsp;<br />'.esc_html__('Format can be endpoint or channel or both','vanilla-bean-slack-hooker').'<br />'.esc_html__('eg:','vanilla-bean-slack-hooker').'<br />'.esc_html__('https://yourendpoint','vanilla-bean-slack-hooker').'<br />'.esc_html__('yourchannel (uses default enpoint)','vanilla-bean-slack-hooker').'<br />'.esc_html__('https://yourendpoint#yourchannel','vanilla-bean-slack-hooker'),
             'options' => array(
                 'repeater'          => true,
                 'accordion'         => false,

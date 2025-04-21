@@ -26,11 +26,11 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_attached' ) ) {
 
 		public function output() {
 
-			echo wp_kses($this->element_before(), $this->allowedTags);
+			echo $this->element_before();
 
 			if ( $this->where != 'metabox' ) {
 
-				echo esc_html('This item only available in metabox!') . '<br>';
+				echo 'This item only available in metabox!<br>';
 
 			} else {
 
@@ -42,20 +42,19 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_attached' ) ) {
 
 				if ( count( $images ) == 0 ) {
 
-					// translators: %1$s: attachment type, %2$s: post type singular name
-					printf( esc_html__( 'There is no attachment with type %1$s for this %2$s.', 'vanilla-bean-slack-hooker' ), esc_html($this->field['options']['type']), esc_html( $post_type->labels->singular_name ) );
+					printf( esc_attr__( 'There is no attachment with type %s for this %s.', 'exopite-sof' ), $this->field['options']['type'], esc_html( $post_type->labels->singular_name ) );
 
 				} else {
 
-					echo '<div class="exopite-sof-attachment-container" data-ajaxurl="' . esc_url(site_url( 'wp-admin/admin-ajax.php' )) . '">';
+					echo '<div class="exopite-sof-attachment-container" data-ajaxurl="' . site_url( 'wp-admin/admin-ajax.php' ) . '">';
 
 					foreach ( $images as $image ) { ?>
                         <span class="exopite-sof-attachment-media exopite-sof-attachment-media-js"
-                              data-media-id="<?php echo esc_attr($image->ID); ?>"><span
+                              data-media-id="<?php echo $image->ID; ?>"><span
                                     class="exopite-sof-attachment-media-delete-overlay"></span><span
                                     class="exopite-sof-attachment-media-delete exopite-sof-attachment-media-delete-js"><i
                                         class="fa fa-times" aria-hidden="true"></i></span><img
-                                    src="<?php echo esc_url(wp_get_attachment_image_src( $image->ID, 'thumbnail' )[0]); ?>"/></span>
+                                    src="<?php echo wp_get_attachment_image_src( $image->ID, 'thumbnail' )[0]; ?>"/></span>
 					<?php }
 
 					echo '</div>';
@@ -64,7 +63,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_attached' ) ) {
 
 			}
 
-			echo wp_kses($this->element_after(), $this->allowedTags);
+			echo $this->element_after();
 
 		}
 

@@ -201,7 +201,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 		public function get_mo_file() {
 			$path = wp_normalize_path( dirname( __FILE__ ) ) . '/lang';
-			$domain = 'vanilla-bean-slack-hooker';
+			$domain = 'exopite-sof';
 			if ( function_exists( 'determine_locale' ) ) {
 				$locale = determine_locale();
 			} else {
@@ -215,7 +215,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			// Hook into init to load textdomain at the correct time
 			add_action( 'init', function() {
 				$mofile = $this->get_mo_file();
-				load_textdomain( 'vanilla-bean-slack-hooker', $mofile );
+			load_textdomain( 'exopite-sof', $mofile );
 			});
 		}
 
@@ -562,7 +562,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		public function mce_external_plugins( $plugins ) {
 			$url             = plugin_dir_url( __FILE__ ) .'';
 			$base            = trailingslashit( join( '/', array( $url, 'assets' ) ) );
-			$plugins['code'] = $base . 'plugin.code.min.js';
+			$plugins['code'] = SLACKHOOKER_DIR_URL.'/exopite-simple-options/assets/plugin.code.min.js';
 			return $plugins;
 		}
 
@@ -974,7 +974,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			 */
 			if ( $this->is_menu_page_loaded() || $this->is_metabox_enabled_post_type() ) :
 
-				$url  = plugin_dir_url( __FILE__);
+				$url  = SLACKHOOKER_DIR_URL.'exopite-simple-options';
 				$base = trailingslashit( join( '/', array( $url, 'assets' ) ) );
 
 				if ( ! wp_style_is( 'font-awesome' ) || ! wp_style_is( 'font-awesome-470' ) || ! wp_style_is( 'FontAwesome' ) ) {

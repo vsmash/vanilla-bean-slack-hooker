@@ -255,14 +255,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Fields' ) ) {
 					if ( $value === 'only-key' ) {
 						$atts .= ' ' . $key;
 					} else {
-                        // if there are double quotes in the value
-                        if ( strpos( $value, '"' ) !== false ) {
-                            $atts .= ' ' . $key . "='" . $value . "'";
-                        } else {
-                            $atts .= ' ' . $key . "='" . $value . "'";
+				    $escaped = htmlspecialchars( $value, ENT_QUOTES );
+				    $atts .= ' ' . $key . "='" . $escaped . "'";
 
-//						$atts .= ' ' . $key . '="' . $value . '"';
-					    }
                     }
 				}
 			}
@@ -293,7 +288,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Fields' ) ) {
 			}
 
 			if ( $echo ) {
-				echo esc_attr( $result );
+				echo $result;
 			}
 
 			return $result;

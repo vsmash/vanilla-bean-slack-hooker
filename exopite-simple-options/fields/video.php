@@ -31,9 +31,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_video' ) ) {
 
 		public function output() {
 
-			echo wp_kses($this->element_before(), $this->allowedTags);
+			echo $this->element_before();
 
-			echo '<div class="exopite-sof-media exopite-sof-video exopite-sof-video-container"' . wp_kses($this->element_class(), $this->allowedTags) . '><div class="video-wrap">';
+			echo '<div class="exopite-sof-media exopite-sof-video exopite-sof-video-container"' . $this->element_class() . '><div class="video-wrap">';
 
 			/**
 			 * If user want only to display a video (without input field), will be never saved,
@@ -48,7 +48,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_video' ) ) {
 
 			if ( $this->field['options']['oembed'] ) {
 
-				echo wp_oembed_get( esc_url($video_url) );
+				echo wp_oembed_get( $video_url );
 
 			} else {
 
@@ -59,7 +59,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_video' ) ) {
 					$this->field['options']['controls']
 				);
 
-				echo '<video class="video-control" ' . implode( ' ', array_map('esc_attr', $video_atts) ) . ' src="' . esc_url($video_url) . '"></video>';
+				echo '<video class="video-control" ' . implode( ' ', $video_atts ) . ' src="' . $video_url . '"></video>';
 
 			}
 
@@ -67,11 +67,11 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_video' ) ) {
 
 			if ( $this->field['options']['input'] ) {
 				echo '<div class="exopite-sof-video-input">';
-				echo '<input type="text" name="' . esc_attr($this->element_name()) . '" value="' . esc_attr($this->element_value()) . '"' . wp_kses($this->element_attributes(), $this->allowedTags) . '/>';
+				echo '<input type="text" name="' . $this->element_name() . '" value="' . $this->element_value() . '"' . $this->element_attributes() . '/>';
 
 				if ( ! $this->field['options']['oembed'] ) {
 
-					echo '<a href="#" class="button button-primary exopite-sof-button">' . esc_html__( 'Add Video', 'vanilla-bean-slack-hooker' ) . '</a>';
+					echo '<a href="#" class="button button-primary exopite-sof-button">' . esc_attr__( 'Add Video', 'exopite-sof' ) . '</a>';
 
 				}
 				echo '</div>';
@@ -79,7 +79,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_video' ) ) {
 
 			echo '</div>';
 
-			echo wp_kses($this->element_after(), $this->allowedTags);
+			echo $this->element_after();
 
 		}
 

@@ -16,9 +16,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_textarea' ) ) {
 
 		public function output() {
 
-			echo wp_kses($this->element_before(), $this->allowedTags);
-			echo '<textarea name="' . esc_attr($this->element_name()) . '"' . wp_kses($this->element_class(), $this->allowedTags) . wp_kses($this->element_attributes(), $this->allowedTags) . '>' . esc_textarea($this->element_value()) . '</textarea>';
-			echo wp_kses($this->element_after(), $this->allowedTags);
+			echo $this->element_before();
+			echo '<textarea name="' . $this->element_name() . '"' . $this->element_class() . $this->element_attributes() . '>' . $this->element_value() . '</textarea>';
+			echo $this->element_after();
 
 		}
 

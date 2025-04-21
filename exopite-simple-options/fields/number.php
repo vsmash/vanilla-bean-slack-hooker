@@ -16,31 +16,31 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_number' ) ) {
 
 		public function output() {
 
-			echo wp_kses( $this->element_before(), $this->allowedTags );
+			echo $this->element_before();
 
-			$unit = ( isset( $this->field['unit'] ) ) ? '<em>' . esc_html( $this->field['unit'] ) . '</em>' : '';
+			$unit = ( isset( $this->field['unit'] ) ) ? '<em>' . $this->field['unit'] . '</em>' : '';
 
 			$attr = array();
 			if ( isset( $this->field['min'] ) ) {
-				$attr[] = 'min="' . esc_attr( $this->field['min'] ) . '"';
+				$attr[] = 'min="' . $this->field['min'] . '"';
 			}
 			if ( isset( $this->field['max'] ) ) {
-				$attr[] = 'max="' . esc_attr( $this->field['max'] ) . '"';
+				$attr[] = 'max="' . $this->field['max'] . '"';
 			}
 			if ( isset( $this->field['step'] ) ) {
-				$attr[] = 'step="' . esc_attr( $this->field['step'] ) . '"';
+				$attr[] = 'step="' . $this->field['step'] . '"';
 			}
 			$attrs = ( ! empty( $attr ) ) ? ' ' . trim( implode( ' ', $attr ) ) : '';
 
-			echo wp_kses( $this->element_prepend(), $this->allowedTags );
+			echo $this->element_prepend();
 
-			echo '<input type="number" name="' . esc_attr( $this->element_name() ) . '" value="' . esc_attr( $this->element_value() ) . '"' . wp_kses( $this->element_class()  . $this->element_attributes()  . $attrs, $this->allowedTags) . '/>';
+			echo '<input type="number" name="' . $this->element_name() . '" value="' . $this->element_value() . '"' . $this->element_class() . $this->element_attributes() . $attrs . '/>';
 
-			echo wp_kses( $this->element_append(), $this->allowedTags );
+			echo $this->element_append();
 
-			echo wp_kses( $unit, $this->allowedTags );
+			echo $unit;
 
-			echo wp_kses( $this->element_after(), $this->allowedTags );
+			echo $this->element_after();
 
 		}
 
