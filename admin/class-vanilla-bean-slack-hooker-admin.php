@@ -83,7 +83,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
             array(
             'type'    => 'group',
             'id'      => 'endpoints',
-            'title'   => esc_html__( 'Specify additional/replacement endpoints here', 'vmsh' ),
+            'title'   => esc_html__( 'Specify additional/replacement endpoints here', 'vanilla-bean-slack-hooker' ),
 //            'help'       => esc_html__('Leave empty to use default endpoint(s).','vanilla-bean-slack-hooker').'<br />&nbsp;<br />'.esc_html__('Format can be endpoint or channel or both','vanilla-bean-slack-hooker').'<br />'.esc_html__('eg:','vanilla-bean-slack-hooker').'<br />'.esc_html__('https://yourendpoint','vanilla-bean-slack-hooker').'<br />'.esc_html__('yourchannel (uses default enpoint)','vanilla-bean-slack-hooker').'<br />'.esc_html__('https://yourendpoint#yourchannel','vanilla-bean-slack-hooker'),
             'options' => array(
                 'repeater'          => true,
@@ -155,7 +155,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
 
                                 // optional
                                 array(
-                                    'title'  => esc_html__( 'Endpoints', $this->plugin_name ),
+                                    'title'  => esc_html__( 'Endpoints', 'vanilla-bean-slack-hooker' ),
                                     'icon'   => 'fa fa-star', // optional
                                     'fields' => array(
 
@@ -558,8 +558,8 @@ class Vanilla_Bean_Slack_Hooker_Admin {
             // 'tabbed'            => false,                        // is tabbed or not
                                                             // Note: if only one section then
                                                             // Tabs are disabled.
-            //'settings_link'     => array('https://www.velvary.com.au'),
-            'settings-link'     =>  'vanilla-bean-slack-hooker',
+            'settings_link'     => array('https://www.velvary.com.au'),
+            //'settings-link'     =>  'vanilla-bean-slack-hooker',
 
             'multilang'         => false,                         // Disable mutilang support, default: true
             'position'          => 3,
@@ -577,7 +577,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
                 array(
                     'type'    => 'group',
                     'id'      => 'defaultendpoints',
-                    'title'   => esc_html__( 'Default Endpoints', 'vmsh' ),
+                    'title'   => esc_html__( 'Default Endpoints', 'vanilla-bean-slack-hooker' ),
                     'description' => '',
                     'after'       => 'eg: <b>https://endpoint, https://endpoint#channel, https://endpoint#channel#here,<br/>https://endpoint##here</b> <i>(no channel)</i><br />Channel is only needed for legacy slack apps and mattermost. You can use "here" or "channel" or "everyone" to use the alert option.<br />You may also choose to use an email address if you prefer it to slack or mattermost',
                     'options' => array(

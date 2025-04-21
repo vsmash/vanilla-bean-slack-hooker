@@ -13,16 +13,16 @@
  * @package           Vanilla Bean Slack Hooker
  *
  * @wordpress-plugin
- * Plugin Name:       Vanilla Bean Slack Hooker
- * Plugin URI:        https://www.velvary.com.au
- * Description:       Integrate webhooks into your site for notifications via Slack, Mattermost or others
- * Version:        5.3.1
- * Author:            Velvary
- * Author URI:        https://www.velvary.com.au
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       vanilla-bean-slack-hooker
- * Domain Path:       /languages
+Plugin Name:       Vanilla Bean Slack Hooker
+Plugin URI:        https://www.velvary.com.au
+Description:       Integrate webhooks into your site for notifications via Slack, Mattermost or others
+Version: 5.4.9
+Author:            Velvary
+Author URI:        https://www.velvary.com.au
+License:           GPL-2.0+
+License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+Text Domain:       vanilla-bean-slack-hooker
+Domain Path:       /languages
  */
 
 // If this file is called directly, abort.
@@ -32,7 +32,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 
 
-const SLACKHOOKER_VERSION = '5.3.1';
+const SLACKHOOKER_VERSION = '5.4.9';
 const SLACKHOOKER_LOGO = 'https://iili.io/F1uU8P.png';
 const SLACKHOOKER_LINK = 'https://www.velvary.com.au/wordpress_plugins/slackhooker';
 const SLACKHOOKER_FOOTERTEXT = 'Slackhooker by Velvary';
