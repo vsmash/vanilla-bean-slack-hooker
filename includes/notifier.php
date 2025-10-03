@@ -141,5 +141,32 @@ if (!function_exists('\VanillaBeans\SlackHooker\plugin_upgrader')) {
 
 // </editor-fold>
 
-add_shortcode('slackhooker', '\VanillaBeans\SlackHooker\vbean_slacknotify');
+/**
+ * Send a formatted message with data fields
+ *
+ * @param string $title The main title of the message
+ * @param array $data Associative array of name => value pairs
+ * @param array $options Optional settings: color, pretext, footer, etc.
+ * @param mixed $endpoints Custom endpoints
+ * @param string $endpointOptions Endpoint options
+ * @return mixed Send result
+ */
+if (!function_exists('\VanillaBeans\SlackHooker\vbean_send_data')) {
+    function vbean_send_data($title, $data = array(), $options = array(), $endpoints = false, $endpointOptions = 'defaults') {
+        return \Vanilla_Bean_Slack_Hooker::send_data_message($title, $data, $options, $endpoints, $endpointOptions);
+    }
+}
 
+/**
+ * Build a formatted attachment message with data fields
+ *
+ * @param string $title The main title of the message
+ * @param array $data Associative array of name => value pairs
+ * @param array $options Optional settings: color, pretext, footer, etc.
+ * @return array Formatted attachment array
+ */
+if (!function_exists('\VanillaBeans\SlackHooker\vbean_build_data_message')) {
+    function vbean_build_data_message($title, $data = array(), $options = array()) {
+        return \Vanilla_Bean_Slack_Hooker::build_data_message($title, $data, $options);
+    }
+}

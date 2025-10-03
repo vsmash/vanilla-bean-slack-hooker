@@ -322,7 +322,79 @@ class Vanilla_Bean_Slack_Hooker {
         return $msg->sendit();
     }
 
+    /**
+     * Build a formatted attachment message with data fields
+     *
+     * @param string $title The main title of the message
+     * @param array $data Associative array of name => value pairs
+     * @param array $options Optional settings: color, pretext, footer, etc.
+     * @return array Formatted attachment array
+     */
+    public static function build_data_message($title, $data = array(), $options = array()) {
+        $defaults = array(
+            'color' => '#36a64f',
+            'pretext' => '',
+            'footer' => SLACKHOOKER_FOOTERTEXT,
+            'footer_icon' => SLACKHOOKER_LOGO,
+            'ts' => time()
+        );
 
+        $settings = array_merge($defaults, $options);
 
+        $message = array(
+            'color' => $settings['color'],
+            'title' => $title,
+            'footer' => $settings['footer'],
+            'footer_icon' => $settings['footer_icon'],
+            'ts' => $settings['ts']
+        );
+
+        // Add optional fields
+        if (!empty($settings['pretext'])) {
+            $message['pretext'] = $settings['pretext'];
+        }
+        if (!empty($settings['text'])) {
+            $message['text'] = $settings['text'];
+        }
+        if (!empty($settings['title_link'])) {
+            $message['title_link'] = $settings['title_link'];
+        }
+        if (!empty($settings['author_name'])) {
+            $message['author_name'] = $settings['author_name'];
+        }
+        if (!empty($settings['author_link'])) {
+            $message['author_link'] = $settings['author_link'];
+        }
+
+        // Build fields array from data
+        if (!empty($data) && is_array($data)) {
+            $fields = array();
+            foreach ($data as $name => $value) {
+                $fields[] = array(
+                    'title' => $name,
+                    'value' => $value,
+                    'short' => true  // Display fields in columns
+                );
+            }
+            $message['fields'] = $fields;
+        }
+
+        return $message;
+    }
+
+    /**
+     * Send a formatted data message
+     *
+     * @param string $title The main title
+     * @param array $data Associative array of name => value pairs
+     * @param array $options Optional settings
+     * @param mixed $endpoints Custom endpoints
+     * @param string $endpointOptions Endpoint options
+     * @return mixed Send result
+     */
+    public static function send_data_message($title, $data = array(), $options = array(), $endpoints = false, $endpointOptions = 'defaults') {
+        $message = self::build_data_message($title, $data, $options);
+        return self::notification_send($message, $endpoints, $endpointOptions);
+    }
 
 }
