@@ -1,6 +1,8 @@
-## 5.5.1
+## 5.5.2
 03 October 2025
 
+- Removed vanilla-bean-slack-hooker reference
+	- rm: deleted reference to vanilla-bean-slack-hooker
 - Enhanced MAIASS and SlackHooker features
 	- feat: added MAIASS configuration file
 	- feat: added new notifier functions in SlackHooker
