@@ -20,7 +20,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_fieldset' ) ) {
 
 		public function output() {
 
-			echo wp_kses($this->element_before(), $this->allowedTags);
+			echo $this->element_before();
 
 			$unallows = array();
 			$unique_id = ( ! empty( $this->unique ) ) ? $this->unique : $this->field['id'];
@@ -58,7 +58,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_fieldset' ) ) {
 
 			foreach ( $fields as $field ) {
 
-				echo '<div class="' . esc_attr(implode( ' ', $col_classes )) . '">';
+				echo '<div class="' . implode( ' ', $col_classes ) . '">';
 
 				if ( in_array( $field['type'], $unallows ) ) {
 					$field['_notice'] = true;
@@ -87,7 +87,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_fieldset' ) ) {
 			echo '</div>'; // row
 			echo '</div>'; // container
 
-			echo wp_kses($this->element_after(), $this->allowedTags);
+			echo $this->element_after();
 
 		}
 

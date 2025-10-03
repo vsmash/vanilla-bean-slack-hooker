@@ -16,7 +16,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_tab' ) ) {
 
 		public function output() {
 
-			echo wp_kses($this->element_before(), $this->allowedTags);
+			echo $this->element_before();
 
 			$unallows = array();
 			$tabs    = array_values( $this->field['tabs'] );
@@ -37,14 +37,14 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_tab' ) ) {
 			/**
 			 * Tab navigation
 			 */
-			echo '<ul class="exopite-sof-tab-header' . esc_attr($equal_width) . '">';
+			echo '<ul class="exopite-sof-tab-header' . $equal_width . '">';
 
 			foreach ( $tabs as $key => $tab ) {
 
 				reset( $tabs );
 				$tab_active = ( $key === key( $tabs ) ) ? ' active' : '';
 
-				echo '<li class="exopite-sof-tab-link' . esc_attr($tab_active) . '">' . esc_html($tab['title']) . '</li>';
+				echo '<li class="exopite-sof-tab-link' . $tab_active . '">' . $tab['title'] . '</li>';
 
 			}
 
@@ -58,8 +58,8 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_tab' ) ) {
 				reset( $tabs );
 				$tab_active = ( $key === key( $tabs ) ) ? ' active' : '';
 
-				echo '<div class="exopite-sof-tab-content' . esc_attr($tab_active) . '">';
-				echo '<div class="exopite-sof-tab-mobile-header">' . esc_html($tab['title']) . '</div>';
+				echo '<div class="exopite-sof-tab-content' . $tab_active . '">';
+				echo '<div class="exopite-sof-tab-mobile-header">' . $tab['title'] . '</div>';
 				echo '<div class="exopite-sof-tab-content-body">';
 				echo '<div class="exopite-sof-tab-content-body-inner">';
 
@@ -83,7 +83,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_tab' ) ) {
 
 					$class = 'Exopite_Simple_Options_Framework_Field_' . $field['type'];
 
-					echo wp_kses($self->add_field( $field, $field_value ), $this->allowedTags);
+					echo $self->add_field( $field, $field_value );
 
 				}
 
@@ -95,7 +95,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_tab' ) ) {
 
 			echo '</div>';
 
-			echo wp_kses($this->element_after(), $this->allowedTags);
+			echo $this->element_after();
 
 		}
 

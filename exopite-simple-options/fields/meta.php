@@ -18,7 +18,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_meta' ) ) {
 
 			if ( $this->config['type'] != 'metabox') {
 
-				echo esc_html('This item only available in metabox!') . '<br>';
+				echo 'This item only available in metabox!<br>';
 
 			} else {
 
@@ -26,9 +26,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_meta' ) ) {
 
 					$value = get_post_meta( get_the_ID(), $this->field['meta-key'], true );
 
-					echo wp_kses($this->element_before(), $this->allowedTags);
-					echo '<textarea readonly' . wp_kses($this->element_class() . $this->element_attributes(), $this->allowedTags) . '>' . esc_textarea(var_export( $value, true )) . '</textarea>';
-					echo wp_kses($this->element_after(), $this->allowedTags);
+					echo $this->element_before();
+					echo '<textarea readonly' . $this->element_class() . $this->element_attributes() . '>' . var_export( $value, true ) . '</textarea>';
+					echo $this->element_after();
 				}
 
 			}
