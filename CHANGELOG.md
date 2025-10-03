@@ -1,6 +1,10 @@
-## 5.5.2
+## 5.5.3
 03 October 2025
 
+- Updated Vanilla Bean Slack Hooker
+	- feat: changed file reference in MAIASS_VERSION_SECONDARY_FILES of .env.maiass
+	- feat: added new CONTRIBUTORS.md and README.md
+	- docs: populated README.md with comprehensive plugin description
 - Removed vanilla-bean-slack-hooker reference
 	- rm: deleted reference to vanilla-bean-slack-hooker
 - Enhanced MAIASS and SlackHooker features
