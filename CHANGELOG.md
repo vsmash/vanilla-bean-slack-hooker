@@ -1,4 +1,4 @@
-## 5.5.7
+## 5.5.9
 25 October 2025
 
 - Refactored Vanilla Bean Slack Hooker Loader
