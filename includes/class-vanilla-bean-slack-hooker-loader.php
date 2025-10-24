@@ -126,7 +126,79 @@ class Vanilla_Bean_Slack_Hooker_Loader {
 			add_action( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
 		}
 
-         add_action('upgrader_process_complete', '\VanillaBeans\SlackHooker\plugin_upgrader', 9999, 2);
+         // Standard hook for admin updates (this works fine)
+         add_action('upgrader_process_complete', function($upgrader, $hook_extra) {
+             \VanillaBeans\SlackHooker\plugin_upgrader($upgrader, $hook_extra);
+         }, 10, 2);
+         
+         // For WP-CLI and auto-updates: Detect version changes on every load
+         add_action('plugins_loaded', function() {
+             $current_plugins = get_plugins();
+             $stored_plugins = get_option('_slackhooker_plugin_versions', array());
+             
+             // Store the current update context (WP-CLI, cron, etc.)
+             $update_context = null;
+             if (defined('WP_CLI') && WP_CLI) {
+                 // Get the configured CLI username
+                 $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
+                 $update_context = isset($options['cli_username']) ? $options['cli_username'] : 'WP-CLI';
+                 update_option('_slackhooker_update_context', $update_context);
+             } elseif (defined('DOING_CRON') && DOING_CRON) {
+                 // Get the configured CLI username (used for auto-updates too)
+                 $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
+                 $update_context = isset($options['cli_username']) ? $options['cli_username'] : 'Auto-update';
+                 update_option('_slackhooker_update_context', $update_context);
+             }
+             
+             // First time - just store current state
+             if (empty($stored_plugins)) {
+                 update_option('_slackhooker_plugin_versions', $current_plugins);
+                 return;
+             }
+             
+             // Compare to detect updates that happened
+             $updated_plugins = array();
+             foreach ($current_plugins as $plugin_file => $plugin_data) {
+                 if (isset($stored_plugins[$plugin_file])) {
+                     $old_version = $stored_plugins[$plugin_file]['Version'];
+                     $new_version = $plugin_data['Version'];
+                     
+                     if (version_compare($new_version, $old_version, '>')) {
+                         $updated_plugins[$plugin_file] = $plugin_data;
+                     }
+                 } elseif (!isset($stored_plugins[$plugin_file])) {
+                     // New plugin installed
+                     $updated_plugins[$plugin_file] = $plugin_data;
+                 }
+             }
+             
+             // Update stored versions for next check
+             update_option('_slackhooker_plugin_versions', $current_plugins);
+             
+             // Send notifications for updated plugins
+             if (!empty($updated_plugins)) {
+                 $stored_context = get_option('_slackhooker_update_context', null);
+                 
+                 // If no context was stored, use the configured CLI username
+                 if (!$stored_context) {
+                     $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
+                     $stored_context = isset($options['cli_username']) ? $options['cli_username'] : 'Auto-update';
+                 }
+                 
+                 foreach ($updated_plugins as $plugin_file => $plugin_data) {
+                     $hook_extra = array(
+                         'type' => 'plugin',
+                         'action' => 'update',
+                         'plugin' => $plugin_file,
+                         'context' => $stored_context
+                     );
+                     
+                     \VanillaBeans\SlackHooker\plugin_upgrader(null, $hook_extra);
+                 }
+                 // Clear the context after use
+                 delete_option('_slackhooker_update_context');
+             }
+         }, 0); // Priority 0 to run as early as possible
 	}
 
 }

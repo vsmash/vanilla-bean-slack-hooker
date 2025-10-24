@@ -617,6 +617,15 @@ class Vanilla_Bean_Slack_Hooker_Admin {
                     //'default'     => 'Default Text',
                     //'help'        => 'Go get your google map api key',
                 ),
+                // CLI/scheduled update username
+                array(
+                    'id'          => 'cli_username',
+                    'type'        => 'text',
+                    'title'       => 'CLI/Auto-update User',
+                    'class'       => 'text-class',
+                    'description' => 'Username shown for WP-CLI and automatic plugin updates',
+                    'default'     => 'Auto-update',
+                ),
                 // default icon
                 array(
                     'id'          => 'default_icon',

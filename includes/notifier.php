@@ -67,15 +67,27 @@ function notification_send($message, $endpoints = null)
 
 // build plugin attachment message
 if (!function_exists('\VanillaBeans\SlackHooker\build_attachment_message')) {
-    function build_attachment_message($color, $status, $plugin)
+    function build_attachment_message($color, $status, $plugin, $context = null)
     {
         $current_user = wp_get_current_user();
         // is $current_user an object?
         $username = empty($current_user) ? 'System' : $current_user->display_name??'System';
-        // is the current user WP-CLI?
-        if (defined('WP_CLI') && WP_CLI) {
-            $username = 'WP-CLI';
+        
+        // Check for stored context first (from version detection)
+        if ($context) {
+            $username = $context;
         }
+        // Otherwise check if WP-CLI is currently running
+        elseif (defined('WP_CLI') && WP_CLI) {
+            $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
+            $username = isset($options['cli_username']) ? $options['cli_username'] : 'WP-CLI';
+        }
+        // Check for auto-updates
+        elseif (defined('DOING_CRON') && DOING_CRON) {
+            $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
+            $username = isset($options['cli_username']) ? $options['cli_username'] : 'Auto-update';
+        }
+        
         $message = array(
             "color" => $color,
             "pretext" => "Plugin " . $status . " on " . get_site_url() . " by " . $username,
@@ -98,9 +110,9 @@ if (!function_exists('\VanillaBeans\SlackHooker\build_attachment_message')) {
 // The args do not arrive correctly so it is here.
 // The hook is specified directly in the loader
 if (!function_exists('\VanillaBeans\SlackHooker\plugin_upgrader')) {
-    function plugin_upgrader($plugin, $upgrader)
+    function plugin_upgrader($upgrader, $hook_extra)
     {
-        if (!isset($upgrader['type'], $upgrader['action']) || $upgrader['type'] != 'plugin' || ($upgrader['action'] != 'install'&& $upgrader['action'] != 'update')) {
+        if (!isset($hook_extra['type'], $hook_extra['action']) || $hook_extra['type'] != 'plugin' || ($hook_extra['action'] != 'install'&& $hook_extra['action'] != 'update')) {
             return false;
         }
 
@@ -108,34 +120,47 @@ if (!function_exists('\VanillaBeans\SlackHooker\plugin_upgrader')) {
         if(!isset($options['notifications']['plugin_change']['tabs'])){
             return false;
         }
-            $obj = $options['notifications']['plugin_change']['tabs'];
-
+        $obj = $options['notifications']['plugin_change']['tabs'];
 
         if($obj['plugin_change_onoff']!='yes'){
             return false;
         }
 
-        $colour = $obj['colours'][$upgrader['action']];
-        $current_user = wp_get_current_user();
-        // is $current_user an object?
-        $username = empty($current_user) ? 'System' : $current_user->display_name??'System';
+        $colour = $obj['colours'][$hook_extra['action']];
 
+        // Extract plugin path(s) from hook_extra
+        // Handle both single plugin updates and bulk updates
+        $plugins = array();
+        if (isset($hook_extra['plugin'])) {
+            // Single plugin update
+            $plugins[] = $hook_extra['plugin'];
+        } elseif (isset($hook_extra['plugins'])) {
+            // Bulk plugin update
+            $plugins = $hook_extra['plugins'];
+        } else {
+            return false;
+        }
 
+        // Process each plugin (usually just one)
+        foreach ($plugins as $plugin_path) {
+            $plugin = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin_path, false);
 
+            // Skip if plugin data couldn't be retrieved
+            if (empty($plugin['Name'])) {
+                continue;
+            }
+            
+            // Pass context if available
+            $context = isset($hook_extra['context']) ? $hook_extra['context'] : null;
+            $message = build_attachment_message($colour, $hook_extra['action'], $plugin, $context);
+            
+            $endpoints = $obj['endpoints']??false;
+            $endpointOptions = $obj['endpointOptions']??'default';
 
-        $plugin = get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin->plugin_info(), false);
+            \Vanilla_Bean_Slack_Hooker::notification_send($message, $endpoints, $endpointOptions);
+        }
 
-        $message = build_attachment_message($colour,$upgrader['action'],$plugin);
-
-        error_log("\033[0;33m attachment message done \033[0m");
-        // if $obj has no array key 'endpoints' assign false to $endpoints
-        $endpoints = $obj['endpoints']??false;
-
-
-        $endpointOptions = $obj['endpointOptions']??'default';
-
-
-        return \Vanilla_Bean_Slack_Hooker::notification_send($message, $endpoints, $endpointOptions);
+        return true;
     }
 }
 
