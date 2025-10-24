@@ -1,6 +1,11 @@
-## 5.5.6
+## 5.5.7
 25 October 2025
 
+- Refactored Vanilla Bean Slack Hooker Loader
+	- refactor: streamlined plugin update hook
+	- refactor: removed duplicate update notifications
+	- refactor: simplified version detection and notification process
+	- refactor: cleaned up context determination for non-admin updates
 - Removed unused config and enhanced plugin update notifications
 	- refactor: removed unused MAIASS_CHANGELOG config from .env.maiass
 	- feat: added logic to prevent duplicate notifications on plugin update in class-vanilla-bean-slack-hooker-loader.php
