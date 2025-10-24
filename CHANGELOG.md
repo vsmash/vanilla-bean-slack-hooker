@@ -1,6 +1,11 @@
-## 5.5.5
+## 5.5.6
 25 October 2025
 
+- Removed unused config and enhanced plugin update notifications
+	- refactor: removed unused MAIASS_CHANGELOG config from .env.maiass
+	- feat: added logic to prevent duplicate notifications on plugin update in class-vanilla-bean-slack-hooker-loader.php
+	- feat: implemented cleanup of old entries from the notified plugins list
+	- delete: removed reference to vanilla-bean-slack-hooker in root directory
 - Enhancements and fixes in Slack Hooker
 	- feat: added CLI/Auto-update User option in admin settings
 	- fix: added checks for isset conditions to prevent undefined errors
