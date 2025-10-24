@@ -1,3 +1,15 @@
+## 5.5.5
+25 October 2025
+
+- Enhancements and fixes in Slack Hooker
+	- feat: added CLI/Auto-update User option in admin settings
+	- fix: added checks for isset conditions to prevent undefined errors
+	- fix: removed error logging in Slack_Hooker_Message
+	- feat: implemented detection of plugin updates during WP-CLI and auto-updates
+	- feat: enhanced update context to differentiate between WP-CLI and auto-updates
+	- feat: implemented plugin updater notifier for detected updates
+	- fix: adjusted email body composition to handle missing payload['text'] scenario
+
 ## 5.5.3
 03 October 2025
 
