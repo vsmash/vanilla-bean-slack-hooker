@@ -126,110 +126,22 @@ class Vanilla_Bean_Slack_Hooker_Loader {
 			add_action( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
 		}
 
-         // Standard hook for admin updates (this works fine)
+         // Hook for all plugin updates (admin, WP-CLI, and auto-updates)
+         // Register early to ensure it fires for all update methods
          add_action('upgrader_process_complete', function($upgrader, $hook_extra) {
-             \VanillaBeans\SlackHooker\plugin_upgrader($upgrader, $hook_extra);
-             
-             // Mark these plugins as already notified to prevent duplicate notifications from version detection
-             if (isset($hook_extra['plugin'])) {
-                 $notified = get_option('_slackhooker_already_notified', array());
-                 $notified[$hook_extra['plugin']] = time();
-                 update_option('_slackhooker_already_notified', $notified);
-             } elseif (isset($hook_extra['plugins'])) {
-                 $notified = get_option('_slackhooker_already_notified', array());
-                 foreach ($hook_extra['plugins'] as $plugin) {
-                     $notified[$plugin] = time();
-                 }
-                 update_option('_slackhooker_already_notified', $notified);
-             }
-         }, 10, 2);
-         
-         // For WP-CLI and auto-updates: Detect version changes on every load
-         add_action('plugins_loaded', function() {
-             $current_plugins = get_plugins();
-             $stored_plugins = get_option('_slackhooker_plugin_versions', array());
-             
-             // Store the current update context (WP-CLI, cron, etc.)
-             $update_context = null;
-             if (defined('WP_CLI') && WP_CLI) {
-                 // Get the configured CLI username
-                 $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
-                 $update_context = isset($options['cli_username']) ? $options['cli_username'] : 'WP-CLI';
-                 update_option('_slackhooker_update_context', $update_context);
-             } elseif (defined('DOING_CRON') && DOING_CRON) {
-                 // Get the configured CLI username (used for auto-updates too)
-                 $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
-                 $update_context = isset($options['cli_username']) ? $options['cli_username'] : 'Auto-update';
-                 update_option('_slackhooker_update_context', $update_context);
-             }
-             
-             // First time - just store current state
-             if (empty($stored_plugins)) {
-                 update_option('_slackhooker_plugin_versions', $current_plugins);
-                 return;
-             }
-             
-             // Compare to detect updates that happened
-             $updated_plugins = array();
-             foreach ($current_plugins as $plugin_file => $plugin_data) {
-                 if (isset($stored_plugins[$plugin_file])) {
-                     $old_version = $stored_plugins[$plugin_file]['Version'];
-                     $new_version = $plugin_data['Version'];
-                     
-                     if (version_compare($new_version, $old_version, '>')) {
-                         $updated_plugins[$plugin_file] = $plugin_data;
-                     }
-                 } elseif (!isset($stored_plugins[$plugin_file])) {
-                     // New plugin installed
-                     $updated_plugins[$plugin_file] = $plugin_data;
-                 }
-             }
-             
-             // Update stored versions for next check
-             update_option('_slackhooker_plugin_versions', $current_plugins);
-             
-             // Send notifications for updated plugins
-             if (!empty($updated_plugins)) {
-                 $stored_context = get_option('_slackhooker_update_context', null);
-                 
-                 // If no context was stored, use the configured CLI username
-                 if (!$stored_context) {
+             // Add context for non-admin updates
+             if (!isset($hook_extra['context'])) {
+                 if (defined('WP_CLI') && WP_CLI) {
                      $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
-                     $stored_context = isset($options['cli_username']) ? $options['cli_username'] : 'Auto-update';
+                     $hook_extra['context'] = isset($options['cli_username']) ? $options['cli_username'] : 'WP-CLI';
+                 } elseif (defined('DOING_CRON') && DOING_CRON) {
+                     $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
+                     $hook_extra['context'] = isset($options['cli_username']) ? $options['cli_username'] : 'Auto-update';
                  }
-                 
-                 // Get list of already notified plugins
-                 $already_notified = get_option('_slackhooker_already_notified', array());
-                 $current_time = time();
-                 
-                 foreach ($updated_plugins as $plugin_file => $plugin_data) {
-                     // Skip if this plugin was already notified in the last 60 seconds
-                     if (isset($already_notified[$plugin_file]) && ($current_time - $already_notified[$plugin_file]) < 60) {
-                         continue;
-                     }
-                     
-                     $hook_extra = array(
-                         'type' => 'plugin',
-                         'action' => 'update',
-                         'plugin' => $plugin_file,
-                         'context' => $stored_context
-                     );
-                     
-                     \VanillaBeans\SlackHooker\plugin_upgrader(null, $hook_extra);
-                 }
-                 
-                 // Clean up old entries (older than 5 minutes)
-                 foreach ($already_notified as $plugin => $timestamp) {
-                     if ($current_time - $timestamp > 300) {
-                         unset($already_notified[$plugin]);
-                     }
-                 }
-                 update_option('_slackhooker_already_notified', $already_notified);
-                 
-                 // Clear the context after use
-                 delete_option('_slackhooker_update_context');
              }
-         }, 0); // Priority 0 to run as early as possible
+             
+             \VanillaBeans\SlackHooker\plugin_upgrader($upgrader, $hook_extra);
+         }, 10, 2);
 	}
 
 }
