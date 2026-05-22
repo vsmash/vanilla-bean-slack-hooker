@@ -54,3 +54,6 @@ dev.csv
 /tutorials/
 /tutorials/
 .env.maiass.local
+
+# Claude Code: commit CLAUDE.md and .claude/agents/; keep personal settings out of git
+.claude/settings.local.json
