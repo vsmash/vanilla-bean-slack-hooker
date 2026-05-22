@@ -1,3 +1,13 @@
+## 5.5.12
+23 May 2026
+
+- Added detailed documentation for new agents
+	- Introduced `code-reviewer` agent for independent reviews on PRs
+	- Added `copywriter` agent for managing WordPress.org listing text
+	- Implemented `plugin-core` agent for runtime behavior management
+	- Created `release-engineer` agent for version management and releases
+	- Specified scopes, boundaries, and usage for each agent
+
 ## 5.5.10
 25 October 2025
 
