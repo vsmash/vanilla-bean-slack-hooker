@@ -104,9 +104,13 @@ Always `git fetch && git checkout develop && git pull` before branching.
 
 ### Commit + PR hygiene
 
-- **Commit subject:** conventional-commit type + `VBSLACK-<N>` reference, e.g.
-  `feat: queue retry on webhook 5xx (VBSLACK-42)`. Keep the `feat:` / `fix:` /
-  `refactor:` / `chore:` prefix — MAIASS groups the changelog by it.
+- **Commit message** — match MAIASS's native format or the auto-changelog loses shape:
+  a plain, capitalised **subject** line (the `VBSLACK-<N>` reference may prefix it — MAIASS
+  strips it from the public `CHANGELOG.md`, keeps it in the internal one), then one-line
+  `- <type>: <desc>` body bullets (`feat`/`fix`/`chore`/`docs`) — e.g. subject
+  `Queue retry on webhook 5xx (VBSLACK-42)`, then `  - feat: retry on 5xx with backoff`.
+  **One block — no blank lines, no wrapped bullets, and never a `Co-Authored-By` trailer.**
+  (MAIASS splits commits on blank lines: line 1 → bullet, the rest → tab-indented sub-bullets.)
 - **PR title:** `VBSLACK-<N>: short summary`.
 - **PR body:** `Closes #<N>` + a one-line what/why.
 - **Versioning is MAIASS's job, not a manual edit** — see Versioning & release.
@@ -157,6 +161,12 @@ releases. `.CHANGELOG_internal.md` is internal-only and excluded from the WP.org
 The main session is the orchestrator. Delegate to specialists via the Task tool.
 Subagents run in fresh contexts — brief them with concrete file paths and line
 numbers, never "based on what we discussed."
+
+**Establish intent first — no guessing (every agent).** Before any agent reviews, audits,
+or rates anything — especially security — establish the plugin's actual purpose / intended
+threat model and **verify it** (maintainer or intent docs); never assume it. Flag every
+inference; ask or investigate when intent is unclear; never rate severity against an
+unverified model. (Global epistemic-honesty rule.) Include this in every subagent brief.
 
 ### Engineering (mutually exclusive scope, by directory)
 
