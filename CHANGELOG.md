@@ -1,6 +1,7 @@
-## 5.6.2
+## 5.6.3
 25 May 2026
 
+- Removed redundant symlink to vanilla-bean-slack-hooker.
 - Updated README with new release information
 	Confirmed compatibility with WordPress 7.0 and PHP 8.3
 	Updated changelog to reflect version change from 5.5.14 to 5.6.2
