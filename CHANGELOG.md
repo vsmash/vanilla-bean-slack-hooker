@@ -1,3 +1,8 @@
+## 5.6.0
+25 May 2026
+
+- Updated secondary files versioning format in .env.maiass
+
 ## 5.5.18
 25 May 2026
 
