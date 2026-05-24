@@ -3,7 +3,7 @@ Contributors: vsmash
 Donate link: http://www.velvary.com.au/vanilla-beans/wordpress/slack-hooker/
 Tags: slack, webhook, message, api, alerts, notifications, mattermost, discord, automation
 Requires at least: 5.4
-Tested up to: 6.8
+Tested up to: 7.0
 PHP Tested up to: 8.2
 Stable tag: 5.5.14
 License: GPLv2 or later
