@@ -1,3 +1,19 @@
+## 5.5.13
+25 May 2026
+
+- Improved WordPress compatibility for versions 6.7 and 8.2 by fixing the i18n textdomain and syncing Exopite to the local knowledge source of truth.
+	Documented the Exopite source of truth and the rule against in-place fixes.
+		- Bundled exopite-simple-options is a shared, self-maintained framework; the source of truth is localknowledge for legacy and velvary/options-framework for the future.
+		- Clarified the need to document fixes in the source of truth instead of making in-place patches.
+- Removed the admin constructor translation that occurred before initialization.
+		- Fixed the issue by eliminating the eager buildEndpointOverrides call from the constructor, which triggered an esc_html__ notice before initialization.
+		- Dropped the write-only $endpointoverrides property; consumers now rebuild it during the initialization process.
+- Added an intent-first block to the security-reviewer agent.
+		- Required verification of the threat model prior to rating severity to avoid assumptions.
+- Corrected commit message guidance for the changelog.
+		- Updated the format to use a plain subject followed by type body bullets, correcting the previous error in the structure.
+		- Specified that commits should not end with Co-Authored-By.
+
 ## 5.5.12
 23 May 2026
 
