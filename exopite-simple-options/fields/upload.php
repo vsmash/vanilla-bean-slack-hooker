@@ -151,7 +151,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				$maxsize = $this->field['options']['maxsize'];
 			}
 
-			$allowed_mime_types = ( gettype( Exopite_Simple_Options_Framework_Upload::allowed_mime_types() ) == 'array' ) ? implode( ',', Exopite_Simple_Options_Framework_Upload::allowed_mime_types() ) : Exopite_Simple_Options_Framework_Upload::allowed_mime_types();
+
+				$mime_types = Exopite_Simple_Options_Framework_Upload::allowed_mime_types();
+				$allowed_mime_types = is_array( $mime_types ) ? implode( ',', $mime_types ) : $mime_types;
 
 			if ( isset( $this->field['options']['allowed'] ) && is_array( $this->field['options']['allowed'] ) ) {
 				$allowed_mime_types_array = explode( ',', $allowed_mime_types );

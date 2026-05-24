@@ -212,11 +212,10 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		}
 
 		public function load_textdomain() {
-			// Hook into init to load textdomain at the correct time
-			add_action( 'init', function() {
-				$mofile = $this->get_mo_file();
+
+			$mofile = $this->get_mo_file();
 			load_textdomain( 'exopite-sof', $mofile );
-			});
+
 		}
 
 		protected function setup_multilang() {
@@ -282,8 +281,8 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				foreach ( $required_key_array as $key ) :
 
 					if ( ! array_key_exists( $key, $this->config ) ) {
-						// translators: %s: configuration key
-						$this->errors->add( "missing_config_key_{$key}", sprintf( esc_attr__( "%s is missing in the configuration array", 'vanilla-bean-slack-hooker' ), $key ) );
+						// Add error message to the WP_Error object
+						$this->errors->add( "missing_config_key_{$key}", sprintf( eac_attr__( "%s is missing in the configuration array", 'exopite-sof' ), $key ) );
 					}
 
 				endforeach;
@@ -366,7 +365,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				$message .= esc_html( implode( ', ', $errors_array ) );
 			} else {
 				// if no message is set, throw generic error message
-				$message .= eac_attr__( 'Irks! An un-known error has occurred.', 'vanilla-bean-slack-hooker' );
+				$message .= eac_attr__( 'Irks! An un-known error has occurred.', 'exopite-sof' );
 			}
 
 			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
@@ -562,7 +561,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		public function mce_external_plugins( $plugins ) {
 			$url             = plugin_dir_url( __FILE__ ) .'';
 			$base            = trailingslashit( join( '/', array( $url, 'assets' ) ) );
-			$plugins['code'] = SLACKHOOKER_DIR_URL.'/exopite-simple-options/assets/plugin.code.min.js';
+			$plugins['code'] = $base . 'plugin.code.min.js';
 			return $plugins;
 		}
 
@@ -670,21 +669,21 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			// remove the file from the end of the path
 			//$thispluginurl = substr($thispluginurl, 0, -strlen(__FILE__));
 			error_log('plugin url: '. $thispluginurl);
-
-
+			
+			
 			// Normalize the ABSPATH and path
 			$abspath = wp_normalize_path(untrailingslashit(ABSPATH));
 			$normalized_path = wp_normalize_path($path);
 
 			// Ensure the path starts with the exact ABSPATH
-			if (!empty($normalized_path) && !empty($abspath) && strpos($normalized_path, $abspath . '/') === 0) {
+			if (strpos($normalized_path, $abspath . '/') === 0) {
 				// Replace ABSPATH with site_url(), ensuring we only replace the exact match
-				$url = !empty($abspath) && !empty($normalized_path) ? str_replace($abspath, site_url(), $normalized_path) : $normalized_path;
+				$url = str_replace($abspath, site_url(), $normalized_path);
 			} else {
 				// If ABSPATH isn't in the path, just return the path appended to the site_url
 				// remove characters from the end of the string until the first slash
-				$modified_path = !empty($abspath) ? preg_replace('/\/[^\/]*$/', '', $abspath) : '';
-				$url = !empty($modified_path) && !empty($normalized_path) ? str_replace($modified_path, site_url(), $normalized_path) : $normalized_path;
+				$modified_path = preg_replace('/\/[^\/]*$/', '', $abspath);
+				$url = str_replace($modified_path, site_url(), $normalized_path);
 				error_log('ABSPATH not in path : ' . $url);
 			}
 			return $url;
@@ -735,7 +734,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 					$options_page_id = $this->unique;
                     $concat="?";
                     // if base contains ? then append with and instead of ?
-                    if (!empty($options_base_file_name) && strpos($options_base_file_name, '?') !== false) {
+                    if (strpos($options_base_file_name, '?') !== false) {
                         $concat="&";
                     }
 
@@ -743,7 +742,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 					$settings_link = "{$options_base_file_name}{$concat}page={$options_page_id}";
 
 					$settings_link_array = array(
-						'<a href="' . admin_url( $settings_link ) . '">' . __( 'Settings', 'vanilla-bean-slack-hooker' ) . '</a>',
+						'<a href="' . admin_url( $settings_link ) . '">' . __( 'Settings', '' ) . '</a>',
 					);
 
 					return array_merge( $settings_link_array, $links );
@@ -766,7 +765,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 				foreach ( $settings_links_config_array as $link ) {
 
-					$link_text         = isset( $link['text'] ) ? sanitize_text_field( $link['text'] ) : __( 'Settings', 'vanilla-bean-slack-hooker' );
+					$link_text         = isset( $link['text'] ) ? sanitize_text_field( $link['text'] ) : __( 'Settings', '' );
 					$link_url_un_clean = isset( $link['url'] ) ? $link['url'] : '#';
 
 					$link_type = isset( $link['type'] ) ? sanitize_key( $link['type'] ) : 'default';
@@ -830,11 +829,11 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				//
 				'parent'        => 'admin.php',
 				'menu'          => 'plugins.php', // For backward compatibility
-				'menu_title'    => __( 'Plugin Options', 'vanilla-bean-slack-hooker' ),
+				'menu_title'    => __( 'Plugin Options', 'exopite-options-framework' ),
 				// Required for submenu
 				'submenu'       => false,
-				//The name of this page
-				'title'         => __( 'Plugin Options', 'vanilla-bean-slack-hooker' ),
+              				//The name of this page
+				'title'         => __( 'Plugin Options', 'exopite-options-framework' ),
 				'option_title'  => '',
 				// The capability needed to view the page
 				'capability'    => 'manage_options',
@@ -924,7 +923,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 //				$this->config = wp_parse_args( $this->config, $default );
 
 				$submenu = add_submenu_page(
-                    $this->config['parent'],
+					$this->config['parent'],
 					$this->config['title'],
 					$this->config['title'],
 					$this->config['capability'],
@@ -974,7 +973,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			 */
 			if ( $this->is_menu_page_loaded() || $this->is_metabox_enabled_post_type() ) :
 
-				$url  = SLACKHOOKER_DIR_URL.'exopite-simple-options';
+				$url  = plugin_dir_url( __FILE__); 
 				$base = trailingslashit( join( '/', array( $url, 'assets' ) ) );
 
 				if ( ! wp_style_is( 'font-awesome' ) || ! wp_style_is( 'font-awesome-470' ) || ! wp_style_is( 'FontAwesome' ) ) {
@@ -1534,8 +1533,8 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			} else {
 
 				$output .= '<div class="danger unknown">';
-				$output .= esc_attr__( 'ERROR:', 'vanilla-bean-slack-hooker' ) . ' ';
-				$output .= esc_attr__( 'This field class is not available!', 'vanilla-bean-slack-hooker' );
+				$output .= esc_attr__( 'ERROR:', 'exopite-simple-options' ) . ' ';
+				$output .= esc_attr__( 'This field class is not available!', 'exopite-simple-options' );
 				$output .= ' <i>(' . $field['type'] . ')</i>';
 				$output .= '</div>';
 
@@ -1607,7 +1606,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 		 */
 		public function display_options_page_header() {
 
-			echo '<form method="post" action="options.php" enctype="multipart/form-data" name="' . $this->unique . '" class="exopite-sof-form-js ' . $this->unique . '-form" data-save="' . esc_attr__( 'Saving...', 'vanilla-bean-slack-hooker' ) . '" data-saved="' . esc_attr__( 'Saved Successfully.', 'vanilla-bean-slack-hooker' ) . '">';
+			echo '<form method="post" action="options.php" enctype="multipart/form-data" name="' . $this->unique . '" class="exopite-sof-form-js ' . $this->unique . '-form" data-save="' . esc_attr__( 'Saving...', 'exopite-sof' ) . '" data-saved="' . esc_attr__( 'Saved Successfully.', 'exopite-sof' ) . '">';
 
 			settings_fields( $this->unique );
 			do_settings_sections( $this->unique );
@@ -1630,7 +1629,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
             }
 
 			echo '<fieldset><span class="exopite-sof-ajax-message"></span>';
-			submit_button( esc_attr__( 'Save Settings', 'vanilla-bean-slack-hooker' ), 'primary ' . 'exopite-sof-submit-button-js', $this->unique . '-save', false, array() );
+			submit_button( esc_attr__( 'Save Settings', 'exopite-sof' ), 'primary ' . 'exopite-sof-submit-button-js', $this->unique . '-save', false, array() );
 			echo '</fieldset>';
 			echo '</header>';
 
@@ -1645,7 +1644,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			echo '<footer class="exopite-sof-footer-js exopite-sof-footer">';
 
 			echo '<fieldset><span class="exopite-sof-ajax-message"></span>';
-			submit_button( esc_attr__( 'Save Settings', 'vanilla-bean-slack-hooker' ), 'primary ' . 'exopite-sof-submit-button-js', '', false, array() );
+			submit_button( esc_attr__( 'Save Settings', 'exopite-sof' ), 'primary ' . 'exopite-sof-submit-button-js', '', false, array() );
 			echo '</fieldset>';
 
 			echo '</footer>';
@@ -1672,9 +1671,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			if ( isset( $section['title'] ) && ! empty( $section['title'] ) ) {
 
 				$icon_before = '';
-				if ( !empty($section_icon) && strpos( $section_icon, 'dashicon' ) !== false ) {
+				if ( strpos( $section_icon, 'dashicon' ) !== false ) {
 					$icon_before = 'dashicons-before ';
-				} elseif ( !empty($section_icon) && strpos( $section_icon, 'fa' ) !== false ) {
+				} elseif ( strpos( $section_icon, 'fa' ) !== false ) {
 					$icon_before = 'fa-before ';
 				}
 
@@ -1726,9 +1725,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 		public function get_menu_item_icons( $section ) {
 
-			if ( isset($section['icon']) && !empty($section['icon']) && strpos('dashicon',  $section['icon'] ) !== false ) {
+			if ( isset($section['icon']) && strpos( $section['icon'], 'dashicon' ) !== false ) {
 				echo '<span class="exopite-sof-nav-icon dashicons-before ' . $section['icon'] . '"></span>';
-			} elseif ( isset($section['icon']) && !empty($section['icon']) && strpos( $section['icon'], 'fa' ) !== false ) {
+			} elseif ( isset($section['icon']) && strpos( $section['icon'], 'fa' ) !== false ) {
 				echo '<span class="exopite-sof-nav-icon fa-before ' . $section['icon'] . '" aria-hidden="true"></span>';
 			}else{
 				echo '<span class="exopite-sof-nav-icon fa-before" aria-hidden="true"></span>';
@@ -1736,7 +1735,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 		}
 
-		public function get_menu_item( $section, $active = '', $force_hidden=false ) {
+		public function get_menu_item( $section, $active = '', $force_hidden = false ) {
 
 			// $active = '';
 			// if ( $section === reset( $this->fields ) ) {
