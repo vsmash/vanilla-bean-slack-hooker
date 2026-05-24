@@ -1,6 +1,8 @@
-## 5.5.15
+## 5.5.16
 25 May 2026
 
+- Updated versioning in configuration file  
+	Improved format for secondary files in .env.maiass and included changelog in MAIASS_VERSION_SECONDARY_FILES.
 - Updated the readme changelog for end users
 	Added a 5.5.14 readme.txt changelog entry for WordPress 7.0 and PHP 8.3 compatibility.
 - Declared WordPress 7.0 compatibility
