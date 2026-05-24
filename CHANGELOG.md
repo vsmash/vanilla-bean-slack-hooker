@@ -1,6 +1,8 @@
-## 5.6.0
+## 5.6.1
 25 May 2026
 
+- Updated secondary file versioning format in environment variable
+	Fixed escaping of newline characters in MAIASS_VERSION_SECONDARY_FILES
 - Updated secondary files versioning format in .env.maiass
 
 ## 5.5.18
