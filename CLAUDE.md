@@ -44,6 +44,7 @@ the bundled Exopite Simple Options framework for its settings screen.
 - **Do not edit `exopite-simple-options/`.** It is a vendored library with its own
   `sanitize-class.php`. If it genuinely must be patched, say so explicitly and treat
   it as a vendored-lib patch (documented, minimal); prefer working around it.
+- **Exopite is a shared, self-maintained framework — fix it at the source, never here.** `exopite-simple-options/` is one of several diverged copies. Current source of truth: **`localknowledge/admin/exopite-simple-options`** (legacy); future: the namespaced rewrite **`velvary/options-framework`** (`common/options-framework`). Never patch this plugin's copy in place — that re-diverges it. Book fixes in the SoT (localknowledge) and propagate. If this copy has a change the SoT lacks, back-port it **up** to the SoT rather than keeping it local. (Divergence is bidirectional.)
 - **Security baseline (this plugin handles external HTTP + admin input + email).**
   Sanitise all input, escape all output, verify nonces on form/AJAX handlers, gate
   admin actions with `current_user_can`. Webhook URLs are user-supplied → treat the

@@ -216,6 +216,24 @@
 .hidden {
     display: none;
 }
+/* On mobile, hide section content but keep headers visible for accordion */
+@media only screen and (max-width: 899px) {
+    .exopite-sof-section.hide {
+        display: block !important;
+    }
+    .exopite-sof-section.hide > *:not(.exopite-sof-section-header) {
+        display: none !important;
+    }
+    .exopite-sof-section-header {
+        display: block !important;
+    }
+}
+/* On desktop, hide entire sections including headers */
+@media only screen and (min-width: 900px) {
+    .hide {
+        display: none;
+    }
+}
 /* Sections */
 .exopite-sof-nav {
     display: none;
