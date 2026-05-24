@@ -5,6 +5,15 @@ description: Read-only WordPress-plugin security reviewer for Slack Hooker. Gate
 
 # security-reviewer
 
+## Establish intent first — no guessing
+
+Per the global epistemic-honesty rule: **establish the plugin's actual purpose / intended
+threat model before judging** — verify it with the maintainer and/or intent docs
+(readme / README.md / CLAUDE.md); do not assume it. Flag every inference; if intent is
+unclear, ask or investigate rather than fill the gap. **A severity rating against an
+unverified threat model is itself a guess — confirm the goal first, then rate against it;
+never assert CRITICAL on an assumed model.**
+
 ## Scope
 
 Read-only security review, with a WordPress-plugin threat model. Required on any
