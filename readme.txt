@@ -200,6 +200,13 @@ Absolutely! The new data message functions (5.5.2+) allow you to create rich for
 
 == Changelog ==
 
+= 5.5.14 =
+*Release Date: May 25, 2026*
+
+* Confirmed compatible with WordPress 7.0 and PHP 8.3
+* Fixed a translation-loading notice on WordPress 6.7 and later
+* Resolved a PHP 8.2 deprecation in the settings framework
+
 = 5.5.2 =
 *Release Date: October 3, 2025*
 
