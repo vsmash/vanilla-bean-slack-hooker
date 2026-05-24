@@ -1,6 +1,12 @@
-## 5.5.14
+## 5.5.15
 25 May 2026
 
+- Updated the readme changelog for end users
+	Added a 5.5.14 readme.txt changelog entry for WordPress 7.0 and PHP 8.3 compatibility.
+- Declared WordPress 7.0 compatibility
+	Updated the readme.txt "Tested up to" section from 6.8 to 7.0 after confirming functional compatibility through a static audit.
+- Added ticket repo-tagging rule to the workflow
+	Every ticket now carries its plugin/repo name.
 - Implemented automatic version bump on PR merge
 	Included setup instructions and workflow notes in YAML file
 - Improved WordPress compatibility for versions 6.7 and 8.2 by fixing the i18n textdomain and syncing Exopite to the local knowledge source of truth.
