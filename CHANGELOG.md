@@ -1,6 +1,9 @@
-## 5.6.1
+## 5.6.2
 25 May 2026
 
+- Updated README with new release information
+	Confirmed compatibility with WordPress 7.0 and PHP 8.3
+	Updated changelog to reflect version change from 5.5.14 to 5.6.2
 - Updated secondary file versioning format in environment variable
 	Fixed escaping of newline characters in MAIASS_VERSION_SECONDARY_FILES
 - Updated secondary files versioning format in .env.maiass
