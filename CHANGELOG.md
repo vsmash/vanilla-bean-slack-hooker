@@ -1,6 +1,8 @@
-## 5.5.16
+## 5.5.17
 25 May 2026
 
+- Updated secondary files versioning in configuration  
+	Adjusted version format for secondary files.
 - Updated versioning in configuration file  
 	Improved format for secondary files in .env.maiass and included changelog in MAIASS_VERSION_SECONDARY_FILES.
 - Updated the readme changelog for end users
