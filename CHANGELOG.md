@@ -1,6 +1,8 @@
-## 5.5.17
+## 5.5.18
 25 May 2026
 
+- Updated secondary files versioning format.
+	Fixed newline formatting in MAIASS_VERSION_SECONDARY_FILES.
 - Updated secondary files versioning in configuration  
 	Adjusted version format for secondary files.
 - Updated versioning in configuration file  
