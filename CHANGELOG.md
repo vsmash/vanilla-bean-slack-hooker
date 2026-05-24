@@ -1,6 +1,8 @@
-## 5.5.13
+## 5.5.14
 25 May 2026
 
+- Implemented automatic version bump on PR merge
+	Included setup instructions and workflow notes in YAML file
 - Improved WordPress compatibility for versions 6.7 and 8.2 by fixing the i18n textdomain and syncing Exopite to the local knowledge source of truth.
 	Documented the Exopite source of truth and the rule against in-place fixes.
 		- Bundled exopite-simple-options is a shared, self-maintained framework; the source of truth is localknowledge for legacy and velvary/options-framework for the future.
