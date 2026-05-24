@@ -52,14 +52,12 @@ class Vanilla_Bean_Slack_Hooker_Admin {
 
     private $options;
 
-    private $endpointoverrides;
     private $tabcount=0;
 
 	public function __construct( $plugin_name, $version ) {
         $this->options = get_exopite_sof_option($plugin_name);
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-	    $this->endpointoverrides = $this->buildEndpointOverrides();
     }
 
 
