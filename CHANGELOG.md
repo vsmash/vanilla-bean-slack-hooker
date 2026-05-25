@@ -1,3 +1,19 @@
+## 5.6.4
+26 May 2026
+
+- Updated Node.js version in CI workflow 
+- Introduced PHP error alerts, routing through Slack with a new "PHP Error Alerts" tab 
+	- Updated settings tab name to "PHP Error Alerts" 
+	- Clarified defaults for PHP Error Alerts options 
+- Updated alert options tab title to 'PHP Error Alerts' 
+- Improved error monitoring configuration, including handling of exemption entries 
+	- Enhanced handling of exemption entries as a repeater group 
+	- Ensured exemptions are checked as an array before processing 
+	- Streamlined extraction of exemption text entries 
+- Implemented error monitoring for Slack notifications with new alert options configuration 
+	- Updated comments for clarity and structure 
+	- Ensured fail-safe mechanisms in error handling
+
 ## 5.6.3
 25 May 2026
 
