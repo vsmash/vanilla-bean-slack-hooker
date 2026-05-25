@@ -809,7 +809,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
                         $this->tabWrapper($pluginchanges,'Plugin Changes', 'Status Alerts and Colours','plugin_change'),
 
                         // error alerts
-                        $this->tabWrapper($alertoptions,'Alert Options', 'Error Alert Options','alert_options'),
+                        $this->tabWrapper($alertoptions,'PHP Error Alerts', 'PHP Error Alerts','alert_options'),
 
                     ),
                 ),
