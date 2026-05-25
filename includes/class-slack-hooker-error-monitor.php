@@ -263,8 +263,6 @@ class Slack_Hooker_Error_Monitor {
         // Title from the subject template (errormailer-compatible tokens).
         $title = self::render_subject( $o['subject'], $label, $errno, $errfile, $errline );
 
-        // Fields. Keep the message bounded; do NOT dump a backtrace with arguments
-        // (those can carry secrets) — a compact file:line frame list only.
         $message = self::clean( $errstr, 1500 );
         $data    = array(
             'Level'   => $label . ' [' . (int) $errno . ']',
@@ -273,9 +271,18 @@ class Slack_Hooker_Error_Monitor {
             'Site'    => get_option( 'blogname' ),
         );
 
+        // Args-free call trace (file:line + function names only — never argument values,
+        // which could carry secrets). Meaningful for the set_error_handler path; empty for
+        // fatals caught at shutdown (the stack has already unwound by then).
+        $text  = $message;
+        $trace = self::capture_trace();
+        if ( '' !== $trace ) {
+            $text .= "\n\n*Trace:*\n```\n" . self::clean( $trace, 2500 ) . "\n```";
+        }
+
         $options = array(
             'color' => $colour,
-            'text'  => $message,
+            'text'  => $text,
         );
 
         try {
@@ -289,6 +296,29 @@ class Slack_Hooker_Error_Monitor {
         } catch ( \Throwable $t ) {
             // delivery failures must stay silent
         }
+    }
+
+    /**
+     * Build an args-free call trace (file:line + function) for the alert. Uses
+     * DEBUG_BACKTRACE_IGNORE_ARGS so argument values are never captured. Returns '' when
+     * only the monitor's own frames are present (e.g. fatals caught at shutdown, where the
+     * stack has already unwound).
+     */
+    private static function capture_trace( $limit = 12 ) {
+        $frames = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, $limit + 8 );
+        $lines  = array();
+        foreach ( $frames as $f ) {
+            if ( isset( $f['class'] ) && __CLASS__ === $f['class'] ) {
+                continue; // skip the monitor's own frames (dispatch/process/handle_*)
+            }
+            $where = ( isset( $f['file'] ) ? $f['file'] : '[internal]' ) . ( isset( $f['line'] ) ? ':' . $f['line'] : '' );
+            $fn    = ( isset( $f['class'] ) ? $f['class'] . ( isset( $f['type'] ) ? $f['type'] : '::' ) : '' ) . ( isset( $f['function'] ) ? $f['function'] : '' );
+            $lines[] = '#' . count( $lines ) . ' ' . $where . ( '' !== $fn ? '  ' . $fn . '()' : '' );
+            if ( count( $lines ) >= $limit ) {
+                break;
+            }
+        }
+        return implode( "\n", $lines );
     }
 
     /** Resolve subject template tokens (mirrors errormailer's tokens). */
