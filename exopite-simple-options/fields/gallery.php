@@ -22,8 +22,11 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_gallery' ) ) {
 			echo $this->element_prepend();
 
 			$defaults = array(
+				// translators: Button label to add images to gallery
 				'add_button' => esc_attr__( 'Add to gallery', 'exopite-sof' ),
+				// translators: Title for the media selection frame
 				'media_frame_title' => esc_attr__( 'Select images for gallery', 'exopite-sof' ),
+				// translators: Button label for confirming image selection
 				'media_frame_button' => esc_attr__( 'Add', 'exopite-sof' ),
 				'media_type' => 'image',
 			);

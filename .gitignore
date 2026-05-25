@@ -54,3 +54,9 @@ dev.csv
 /tutorials/
 /tutorials/
 .env.maiass.local
+
+# Claude Code: commit CLAUDE.md and .claude/agents/; keep personal settings out of git
+.claude/settings.local.json
+
+# Homestead VM dev symlink (resolves in-VM; dangling from macOS)
+/vanilla-bean-slack-hooker

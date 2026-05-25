@@ -480,12 +480,6 @@
         toggleClick: function(p,c,o) {
             var s = f.get.siblings(p,o);
             f.h.tog(c.current.v, o);
-            f.h.state(s,o);      
-            f.set.clicks(c.current.v, null, null, p, o);
-        },
-        toggleClick: function(p,c,o) {
-            var s = f.get.siblings(p,o);
-            f.h.tog(c.current.v, o);
             f.h.state(s,o);
             f.set.clicks(c.current.v, null, null, p, o);
         },

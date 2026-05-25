@@ -80,16 +80,16 @@ class Slack_Hooker_Message
                 $this->payload['channel'] = '#' . $endpoint['channel'];
             }
             // check for slack app
-            if($endpoint["alert"]){
+            if($endpoint["alert"] && isset($this->payload['text'])){
                 $this->payload['text']='<!'.$endpoint["alert"].'>'.$this->payload['text'];
             }
-            if($endpoint["icon"]){
+            if(isset($endpoint["icon"]) && $endpoint["icon"]){
                 $this->payload['icon_emoji']=$endpoint["icon"];
             }
-            elseif($endpoint["emoji"]){
+            elseif(isset($endpoint["emoji"]) && $endpoint["emoji"]){
                 $this->payload['icon_emoji']=$endpoint["emoji"];
             }
-            if(str_starts_with($endpoint["url"],'https://hooks.slack.com/services/')){
+            if(str_starts_with($endpoint["url"],'https://hooks.slack.com/services/') && isset($this->payload['text'])){
                 $this->payload['text']=$this->payload['username'].': '.$this->payload['text'];
             }
             $this->apiargs['body'] = array('payload' => json_encode($this->payload));
@@ -98,7 +98,8 @@ class Slack_Hooker_Message
                 $isemail =filter_var($endpoint['url'], FILTER_VALIDATE_EMAIL);
 
                 if($isemail){
-                    $output[] = wp_mail($endpoint['url'], $this->payload['username'], $this->payload['text']);
+                    $email_body = isset($this->payload['text']) ? $this->payload['text'] : json_encode($this->payload);
+                    $output[] = wp_mail($endpoint['url'], $this->payload['username'], $email_body);
                     continue;
                 }
                 if($this->options['omit_cron']=='yes') {
@@ -163,9 +164,6 @@ class Slack_Hooker_Message
             }
             $formattedEndpoints[]=$epx;
         }
-        error_log("\033[0;53m");
-        error_log(print_r($formattedEndpoints,true));
-        error_log("\033[0m");
         $this->endpoints = $formattedEndpoints;
     }
 

@@ -3,9 +3,9 @@ Contributors: vsmash
 Donate link: http://www.velvary.com.au/vanilla-beans/wordpress/slack-hooker/
 Tags: slack, webhook, message, api, alerts, notifications, mattermost, discord, automation
 Requires at least: 5.4
-Tested up to: 6.8
+Tested up to: 7.0
 PHP Tested up to: 8.2
-Stable tag: 5.5.4
+Stable tag: 5.6.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -199,6 +199,13 @@ Absolutely! The new data message functions (5.5.2+) allow you to create rich for
 5. WooCommerce sales notifications
 
 == Changelog ==
+
+= 5.6.3 =
+*Release Date: May 25, 2026*
+
+* Confirmed compatible with WordPress 7.0 and PHP 8.3
+* Fixed a translation-loading notice on WordPress 6.7 and later
+* Resolved a PHP 8.2 deprecation in the settings framework
 
 = 5.5.2 =
 *Release Date: October 3, 2025*

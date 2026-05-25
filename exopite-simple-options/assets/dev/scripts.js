@@ -2097,7 +2097,18 @@ jQuery.fn.findExclude = function (selector, mask, result) {
 
         });
         $('.exopite-sof-group').exopiteSOFTinyMCE();
+        
+        // Initialize accordion
         $('.exopite-sof-accordion').exopiteSOFAccordion();
+        
+        // Show second section by default (remove 'hide' class)
+        $('.exopite-sof-section').eq(1).removeClass('hide');
+        
+        // Show second tab in the first accordion by default
+        $('.exopite-sof-accordion').first().find('.exopite-sof-accordion__item').eq(1)
+            .removeClass('exopite-sof-accordion--hidden')
+            .find('.exopite-sof-accordion__content').show();
+        
         $('.exopite-sof-group').exopiteSOFRepeater();
         $('.exopite-sof-field-backup').exopiteImportExportAJAX();
         $('.exopite-sof-tabs').exopiteTabs();

@@ -137,6 +137,10 @@ class Vanilla_Bean_Slack_Hooker {
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/notifier.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/legacy.php';
 
+        /** Error Monitor — capture PHP errors and route alerts through the delivery pipeline (VBSLACK-6 #7/#8). */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-slack-hooker-error-monitor.php';
+        Slack_Hooker_Error_Monitor::init();
+
 		$this->loader = new Vanilla_Bean_Slack_Hooker_Loader();
 
 	}

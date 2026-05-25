@@ -52,14 +52,12 @@ class Vanilla_Bean_Slack_Hooker_Admin {
 
     private $options;
 
-    private $endpointoverrides;
     private $tabcount=0;
 
 	public function __construct( $plugin_name, $version ) {
         $this->options = get_exopite_sof_option($plugin_name);
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-	    $this->endpointoverrides = $this->buildEndpointOverrides();
     }
 
 
@@ -480,6 +478,95 @@ class Vanilla_Bean_Slack_Hooker_Admin {
                 ),
             ),
         ));
+        $alertoptions = array(
+            array(
+                'id'      => 'alert_options_onoff',
+                'type'    => 'switcher',
+                'title'   => esc_html__( 'Active', 'vanilla-bean-slack-hooker' ),
+                'default' => 'no',
+            ),
+            array(
+                'id'      => 'level_fatal',
+                'type'    => 'switcher',
+                'title'   => esc_html__( 'Alert on fatal errors', 'vanilla-bean-slack-hooker' ),
+                'default' => 'no',
+            ),
+            array(
+                'id'      => 'level_parse',
+                'type'    => 'switcher',
+                'title'   => esc_html__( 'Alert on parse errors', 'vanilla-bean-slack-hooker' ),
+                'default' => 'no',
+            ),
+            array(
+                'id'      => 'level_warning',
+                'type'    => 'switcher',
+                'title'   => esc_html__( 'Alert on warnings', 'vanilla-bean-slack-hooker' ),
+                'default' => 'no',
+            ),
+            array(
+                'id'      => 'level_notice',
+                'type'    => 'switcher',
+                'title'   => esc_html__( 'Alert on notices', 'vanilla-bean-slack-hooker' ),
+                'default' => 'no',
+            ),
+            array(
+                'id'      => 'level_deprecated',
+                'type'    => 'switcher',
+                'title'   => esc_html__( 'Alert on deprecations', 'vanilla-bean-slack-hooker' ),
+                'default' => 'no',
+            ),
+            array(
+                'id'    => 'excludetypes',
+                'type'  => 'text',
+                'title' => esc_html__( 'Exclude error numbers', 'vanilla-bean-slack-hooker' ),
+                'attributes' => array(
+                    'placeholder' => esc_html__( 'e.g. 8, 2048', 'vanilla-bean-slack-hooker' ),
+                ),
+                'after' => esc_html__( 'Comma-separated PHP error numbers to ignore.', 'vanilla-bean-slack-hooker' ),
+                'help'  => esc_html__( 'Comma-separated PHP error numbers to ignore (e.g. 8, 2048).', 'vanilla-bean-slack-hooker' ),
+                'default' => '',
+            ),
+            array(
+                'type'    => 'group',
+                'id'      => 'exemptions',
+                'title'   => esc_html__( 'Exemptions', 'vanilla-bean-slack-hooker' ),
+                'after'   => esc_html__( 'Skip an error when its file matches a fragment — optionally pin a line with "file,line".', 'vanilla-bean-slack-hooker' ),
+                'options' => array(
+                    'repeater'     => true,
+                    'accordion'    => false,
+                    'button_title' => esc_html__( 'Add new', 'vanilla-bean-slack-hooker' ),
+                    'group_title'  => esc_html__( 'Exemption', 'vanilla-bean-slack-hooker' ),
+                    'limit'        => 50,
+                    'sortable'     => true,
+                    'mode'         => 'compact',
+                ),
+                'fields'  => array(
+                    array(
+                        'id'         => 'exemption_text',
+                        'type'       => 'text',
+                        'attributes' => array(
+                            'data-title'  => 'Exemption',
+                            'placeholder' => esc_html__( 'path/fragment.php   or   path/fragment.php,42', 'vanilla-bean-slack-hooker' ),
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                'id'    => 'subject',
+                'type'  => 'text',
+                'title' => esc_html__( 'Subject', 'vanilla-bean-slack-hooker' ),
+                'after' => esc_html__( 'Tokens: {errortype} {errornumber} {errorline} {errorpage} {siteurl} {sitename}', 'vanilla-bean-slack-hooker' ),
+                'help'  => esc_html__( 'Tokens: {errortype} {errornumber} {errorline} {errorpage} {siteurl} {sitename}', 'vanilla-bean-slack-hooker' ),
+                'default' => '{sitename}: {errortype}',
+            ),
+            array(
+                'id'    => 'throttle',
+                'type'  => 'number',
+                'title' => esc_html__( 'Throttle', 'vanilla-bean-slack-hooker' ),
+                'help'  => esc_html__( 'Seconds to suppress identical repeat errors.', 'vanilla-bean-slack-hooker' ),
+                'default' => '60',
+            ),
+        );
         $post_status = array(array(
             'type'    => 'fieldset',
             'id'      => 'post_status',
@@ -617,6 +704,15 @@ class Vanilla_Bean_Slack_Hooker_Admin {
                     //'default'     => 'Default Text',
                     //'help'        => 'Go get your google map api key',
                 ),
+                // CLI/scheduled update username
+                array(
+                    'id'          => 'cli_username',
+                    'type'        => 'text',
+                    'title'       => 'CLI/Auto-update User',
+                    'class'       => 'text-class',
+                    'description' => 'Username shown for WP-CLI and automatic plugin updates',
+                    'default'     => 'Auto-update',
+                ),
                 // default icon
                 array(
                     'id'          => 'default_icon',
@@ -711,6 +807,9 @@ class Vanilla_Bean_Slack_Hooker_Admin {
 
                         // plugin changes
                         $this->tabWrapper($pluginchanges,'Plugin Changes', 'Status Alerts and Colours','plugin_change'),
+
+                        // error alerts
+                        $this->tabWrapper($alertoptions,'PHP Error Alerts', 'PHP Error Alerts','alert_options'),
 
                     ),
                 ),
