@@ -478,6 +478,72 @@ class Vanilla_Bean_Slack_Hooker_Admin {
                 ),
             ),
         ));
+        $alertoptions = array(
+            array(
+                'id'      => 'alert_options_onoff',
+                'type'    => 'switcher',
+                'title'   => esc_html__( 'Active', 'vanilla-bean-slack-hooker' ),
+                'default' => 'yes',
+            ),
+            array(
+                'id'      => 'level_fatal',
+                'type'    => 'switcher',
+                'title'   => esc_html__( 'Alert on fatal errors', 'vanilla-bean-slack-hooker' ),
+                'default' => 'yes',
+            ),
+            array(
+                'id'      => 'level_parse',
+                'type'    => 'switcher',
+                'title'   => esc_html__( 'Alert on parse errors', 'vanilla-bean-slack-hooker' ),
+                'default' => 'yes',
+            ),
+            array(
+                'id'      => 'level_warning',
+                'type'    => 'switcher',
+                'title'   => esc_html__( 'Alert on warnings', 'vanilla-bean-slack-hooker' ),
+                'default' => 'no',
+            ),
+            array(
+                'id'      => 'level_notice',
+                'type'    => 'switcher',
+                'title'   => esc_html__( 'Alert on notices', 'vanilla-bean-slack-hooker' ),
+                'default' => 'no',
+            ),
+            array(
+                'id'      => 'level_deprecated',
+                'type'    => 'switcher',
+                'title'   => esc_html__( 'Alert on deprecations', 'vanilla-bean-slack-hooker' ),
+                'default' => 'no',
+            ),
+            array(
+                'id'    => 'excludetypes',
+                'type'  => 'text',
+                'title' => esc_html__( 'Exclude error numbers', 'vanilla-bean-slack-hooker' ),
+                'help'  => esc_html__( 'Comma-separated PHP error numbers to ignore (e.g. 8,2048).', 'vanilla-bean-slack-hooker' ),
+                'default' => '',
+            ),
+            array(
+                'id'    => 'exemptions',
+                'type'  => 'textarea',
+                'title' => esc_html__( 'Exemptions', 'vanilla-bean-slack-hooker' ),
+                'help'  => esc_html__( 'One per line: a file path fragment, or `file,line`, to skip.', 'vanilla-bean-slack-hooker' ),
+                'default' => '',
+            ),
+            array(
+                'id'    => 'subject',
+                'type'  => 'text',
+                'title' => esc_html__( 'Subject', 'vanilla-bean-slack-hooker' ),
+                'help'  => esc_html__( 'Tokens: {errortype} {errornumber} {errorline} {errorpage} {siteurl} {sitename}', 'vanilla-bean-slack-hooker' ),
+                'default' => '{sitename}: {errortype}',
+            ),
+            array(
+                'id'    => 'throttle',
+                'type'  => 'number',
+                'title' => esc_html__( 'Throttle', 'vanilla-bean-slack-hooker' ),
+                'help'  => esc_html__( 'Seconds to suppress identical repeat errors.', 'vanilla-bean-slack-hooker' ),
+                'default' => '60',
+            ),
+        );
         $post_status = array(array(
             'type'    => 'fieldset',
             'id'      => 'post_status',
@@ -718,6 +784,9 @@ class Vanilla_Bean_Slack_Hooker_Admin {
 
                         // plugin changes
                         $this->tabWrapper($pluginchanges,'Plugin Changes', 'Status Alerts and Colours','plugin_change'),
+
+                        // error alerts
+                        $this->tabWrapper($alertoptions,'Alert Options', 'Error Alert Options','alert_options'),
 
                     ),
                 ),
