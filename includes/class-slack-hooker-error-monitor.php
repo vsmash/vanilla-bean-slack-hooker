@@ -5,7 +5,7 @@
  * Captures PHP errors (by level), throttles repeats, and routes an alert through
  * Slack Hooker's existing delivery pipeline (Vanilla_Bean_Slack_Hooker::send_data_message).
  * Ported from the standalone Vanilla Bean - Error Mailer plugin (epic VBSLACK-6: #7 capture, #8 routing).
- * Configured via the "Alert Options" settings tab (#9).
+ * Configured via the "PHP Error Alerts" settings tab (#9).
  *
  * Fail-safe by design: the handlers guard against re-entrancy, swallow their own
  * throwables, never echo, and always let PHP's normal error handling continue — so a
@@ -40,8 +40,8 @@ class Slack_Hooker_Error_Monitor {
     }
 
     /**
-     * Resolve Alert Options from the Exopite store, with sensible defaults so the
-     * feature is useful with zero configuration. No import of legacy errormailer options.
+     * Resolve PHP Error Alerts options from the Exopite store, with safe defaults
+     * (everything off until explicitly enabled). No import of legacy errormailer options.
      *
      * @return array
      */
