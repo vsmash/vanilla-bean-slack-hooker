@@ -51,8 +51,8 @@ class Slack_Hooker_Error_Monitor {
         }
 
         $o = array(
-            'enabled'         => true,
-            'levels'          => array( 'fatal' => true, 'parse' => true, 'warning' => false, 'notice' => false, 'deprecated' => false ),
+            'enabled'         => false,
+            'levels'          => array( 'fatal' => false, 'parse' => false, 'warning' => false, 'notice' => false, 'deprecated' => false ),
             'exclude'         => array(),                  // errno ints to skip
             'exemptions'      => array(),                  // "file" or "file,line" entries
             'subject'         => '{sitename}: {errortype}',

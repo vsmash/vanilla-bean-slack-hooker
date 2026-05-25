@@ -483,19 +483,19 @@ class Vanilla_Bean_Slack_Hooker_Admin {
                 'id'      => 'alert_options_onoff',
                 'type'    => 'switcher',
                 'title'   => esc_html__( 'Active', 'vanilla-bean-slack-hooker' ),
-                'default' => 'yes',
+                'default' => 'no',
             ),
             array(
                 'id'      => 'level_fatal',
                 'type'    => 'switcher',
                 'title'   => esc_html__( 'Alert on fatal errors', 'vanilla-bean-slack-hooker' ),
-                'default' => 'yes',
+                'default' => 'no',
             ),
             array(
                 'id'      => 'level_parse',
                 'type'    => 'switcher',
                 'title'   => esc_html__( 'Alert on parse errors', 'vanilla-bean-slack-hooker' ),
-                'default' => 'yes',
+                'default' => 'no',
             ),
             array(
                 'id'      => 'level_warning',
