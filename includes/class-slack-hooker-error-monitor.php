@@ -80,8 +80,15 @@ class Slack_Hooker_Error_Monitor {
                 if ( ! empty( $tab['excludetypes'] ) ) {
                     $o['exclude'] = array_filter( array_map( 'intval', array_map( 'trim', explode( ',', $tab['excludetypes'] ) ) ) );
                 }
-                if ( ! empty( $tab['exemptions'] ) ) {
-                    $o['exemptions'] = array_filter( array_map( 'trim', preg_split( '/\r\n|\r|\n/', $tab['exemptions'] ) ) );
+                // Exemptions are a repeater group: array of items each holding 'exemption_text'.
+                if ( ! empty( $tab['exemptions'] ) && is_array( $tab['exemptions'] ) ) {
+                    $entries = array();
+                    foreach ( $tab['exemptions'] as $item ) {
+                        if ( is_array( $item ) && isset( $item['exemption_text'] ) && '' !== trim( $item['exemption_text'] ) ) {
+                            $entries[] = trim( $item['exemption_text'] );
+                        }
+                    }
+                    $o['exemptions'] = $entries;
                 }
                 if ( isset( $tab['subject'] ) && '' !== $tab['subject'] ) {
                     $o['subject'] = $tab['subject'];
