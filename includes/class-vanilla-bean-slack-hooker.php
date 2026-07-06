@@ -1,6 +1,6 @@
 <?php
 
-require_once (SLACKHOOKER_DIR.'exopite-simple-options/exopite-simple-options-framework-class.php');
+require_once (SLACKHOOKER_DIR.'options-framework/exopite-simple-options/exopite-simple-options-framework-class.php');
 /**
  * The file that defines the core plugin class
  *
@@ -107,7 +107,7 @@ class Vanilla_Bean_Slack_Hooker {
         require_once plugin_dir_path( dirname(__FILE__)).'includes/legacy.php';
 
         /** options **/
-        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'exopite-simple-options/exopite-simple-options-framework-class.php';
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'options-framework/exopite-simple-options/exopite-simple-options-framework-class.php';
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
