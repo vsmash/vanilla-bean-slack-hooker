@@ -1,0 +1,3 @@
+[submodule "options-framework"]
+	path = options-framework
+	url = git@github.com:vsmash/options-framework.git

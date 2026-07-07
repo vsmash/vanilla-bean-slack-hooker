@@ -1,3 +1,14 @@
+## 5.6.5
+6 July 2026
+
+- SOF: adopt shared options-framework submodule (single source of truth)
+	SOF: move Exopite to shared options-framework submodule (single source of truth)
+	  - add options-framework submodule of vsmash/options-framework
+	  - repoint both framework require_once lines to the submodule
+	  - remove vendored exopite-simple-options (548 files)
+	  - verified live on vanillabeans: settings form renders, framework assets 200, no fatal
+	  - SVN deploy hardened in shared tooling (submodule init + fail-closed assertion + auto svn-rm of stale copy)
+
 ## 5.6.4
 26 May 2026
 
