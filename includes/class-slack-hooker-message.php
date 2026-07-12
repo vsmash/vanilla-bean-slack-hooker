@@ -178,6 +178,28 @@ class Slack_Hooker_Message
         return $json === false ? '' : $json;
     }
 
+    // Every structured notification (WooCommerce, post status, plugin changes, error
+    // alerts) sets only 'attachments' — see notification_send(). Split them into prose
+    // lines and name/value facts, so each platform can lay them out its own way.
+    private function attachmentParts($payload)
+    {
+        $parts = array('lines' => array(), 'facts' => array());
+
+        if (empty($payload['attachments']) || !is_array($payload['attachments'])) {
+            return $parts;
+        }
+        foreach ($payload['attachments'] as $attachment) {
+            if (!is_array($attachment)) {
+                continue;
+            }
+            $flat = $this->flattenAttachment($attachment);
+            $parts['lines'] = array_merge($parts['lines'], $flat['lines']);
+            $parts['facts'] = array_merge($parts['facts'], $flat['facts']);
+        }
+
+        return $parts;
+    }
+
     // the human-readable message for platforms with no attachment concept
     private function messageText($payload)
     {
@@ -185,16 +207,10 @@ class Slack_Hooker_Message
             return $payload['text'];
         }
 
-        // Every structured notification (WooCommerce, post status, plugin changes,
-        // error alerts) sets only 'attachments' — see notification_send(). Without
-        // this, those messages would arrive as a raw JSON dump.
-        $lines = array();
-        if (!empty($payload['attachments']) && is_array($payload['attachments'])) {
-            foreach ($payload['attachments'] as $attachment) {
-                if (is_array($attachment)) {
-                    $lines = array_merge($lines, $this->flattenAttachment($attachment));
-                }
-            }
+        $parts = $this->attachmentParts($payload);
+        $lines = $parts['lines'];
+        foreach ($parts['facts'] as $fact) {
+            $lines[] = $fact['name'] . ': ' . $fact['value'];
         }
         if ($lines) {
             return implode("\n", $lines);
@@ -203,13 +219,22 @@ class Slack_Hooker_Message
         return $this->jsonBody($payload);
     }
 
-    // a Slack attachment as plain lines; color/footer/ts are chrome, not content
+    // a Slack attachment split into prose + facts; color/footer/ts are chrome, not content
     private function flattenAttachment($attachment)
     {
         $lines = array();
+        $facts = array();
 
         if (!empty($attachment['pretext'])) {
             $lines[] = $attachment['pretext'];
+        }
+        // author_name is content, not chrome: for a post it is the post's author, who
+        // is not the acting user named in the pretext; for a comment it carries the
+        // commenter's email. Dropping it loses information.
+        if (!empty($attachment['author_name'])) {
+            $lines[] = !empty($attachment['author_link'])
+                ? '<' . $attachment['author_link'] . '|' . $attachment['author_name'] . '>'
+                : $attachment['author_name'];
         }
         if (!empty($attachment['title'])) {
             $lines[] = !empty($attachment['title_link'])
@@ -221,13 +246,16 @@ class Slack_Hooker_Message
         }
         if (!empty($attachment['fields']) && is_array($attachment['fields'])) {
             foreach ($attachment['fields'] as $field) {
-                if (isset($field['title'], $field['value'])) {
-                    $lines[] = $field['title'] . ': ' . $field['value'];
+                // build_data_message() copies caller data straight into fields, so a
+                // value can be an array; concatenating it would warn and print "Array".
+                if (isset($field['title'], $field['value'])
+                    && is_scalar($field['title']) && is_scalar($field['value'])) {
+                    $facts[] = array('name' => $field['title'], 'value' => $field['value']);
                 }
             }
         }
 
-        return $lines;
+        return array('lines' => $lines, 'facts' => $facts);
     }
 
     // <!channel> / <!here> only mean something to Slack; elsewhere they render literally
@@ -251,9 +279,20 @@ class Slack_Hooker_Message
             ? $payload['username']
             : get_bloginfo('name');
 
-        $text = $this->slackLinksToMarkdown($this->stripSlackAlerts($this->messageText($payload)));
+        $parts = $this->attachmentParts($payload);
 
-        return array(
+        if ($parts['lines'] || $parts['facts']) {
+            // MessageCard text is Markdown, where a single newline is a soft break and
+            // renders as a space — hence the blank line between prose blocks. Facts get
+            // their own name/value layout, which the docs prefer over inlining them.
+            $lines = $parts['lines'];
+        } else {
+            $lines = array($this->messageText($payload));
+        }
+
+        $text = $this->slackLinksToMarkdown($this->stripSlackAlerts(implode("\n\n", $lines)));
+
+        $card = array(
             '@type'      => 'MessageCard',
             '@context'   => 'https://schema.org/extensions',
             'summary'    => $title,
@@ -261,6 +300,12 @@ class Slack_Hooker_Message
             'title'      => $title,
             'text'       => $text,
         );
+
+        if ($parts['facts']) {
+            $card['sections'] = array(array('facts' => $parts['facts']));
+        }
+
+        return $card;
     }
 
     // function to cron shedule remote post
