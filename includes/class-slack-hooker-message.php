@@ -76,36 +76,41 @@ class Slack_Hooker_Message
         }
         $output = array();
         foreach ($this->endpoints as $endpoint) {
+            // Each endpoint gets its own copy. The mutations below are per-endpoint
+            // (channel, alert ping, icon, Slack username prefix); sharing one payload
+            // let them accumulate, so a second endpoint inherited the first one's
+            // channel and a doubled "User: User: " prefix.
+            $payload = $this->payload;
+
             if ($endpoint["channel"]) {
-                $this->payload['channel'] = '#' . $endpoint['channel'];
+                $payload['channel'] = '#' . $endpoint['channel'];
             }
             // check for slack app
-            if($endpoint["alert"] && isset($this->payload['text'])){
-                $this->payload['text']='<!'.$endpoint["alert"].'>'.$this->payload['text'];
+            if($endpoint["alert"] && isset($payload['text'])){
+                $payload['text']='<!'.$endpoint["alert"].'>'.$payload['text'];
             }
             if(isset($endpoint["icon"]) && $endpoint["icon"]){
-                $this->payload['icon_emoji']=$endpoint["icon"];
+                $payload['icon_emoji']=$endpoint["icon"];
             }
             elseif(isset($endpoint["emoji"]) && $endpoint["emoji"]){
-                $this->payload['icon_emoji']=$endpoint["emoji"];
+                $payload['icon_emoji']=$endpoint["emoji"];
             }
-            if(str_starts_with($endpoint["url"],'https://hooks.slack.com/services/') && isset($this->payload['text'])){
-                $this->payload['text']=$this->payload['username'].': '.$this->payload['text'];
+            if(str_starts_with($endpoint["url"],'https://hooks.slack.com/services/') && isset($payload['text'])){
+                $payload['text']=$payload['username'].': '.$payload['text'];
             }
-            $this->applyTransport($endpoint['url']);
+            $args = $this->transportArgs($endpoint['url'], $payload);
             if($this->canSend($endpoint['url'])){
                 // if $endpoint['url'] is an email address, send it to the email address
                 $isemail =filter_var($endpoint['url'], FILTER_VALIDATE_EMAIL);
 
                 if($isemail){
-                    $email_body = isset($this->payload['text']) ? $this->payload['text'] : json_encode($this->payload);
-                    $output[] = wp_mail($endpoint['url'], $this->payload['username'], $email_body);
+                    $output[] = wp_mail($endpoint['url'], $payload['username'], $this->messageText($payload));
                     continue;
                 }
                 if($this->options['omit_cron']=='yes') {
-                    $output[] = wp_remote_post($endpoint['url'], $this->apiargs);
+                    $output[] = wp_remote_post($endpoint['url'], $args);
                 }else{
-                    $this->cronSend($endpoint['url'], $this->apiargs);
+                    $this->cronSend($endpoint['url'], $args);
                 }
             }
         }
@@ -136,35 +141,93 @@ class Slack_Hooker_Message
         return $host === $suffix || str_ends_with($host, '.' . $suffix);
     }
 
-    // set body + content-type for this endpoint's webhook family
-    private function applyTransport($url)
+    // request args for this endpoint's webhook family
+    private function transportArgs($url, $payload)
     {
+        $args = $this->apiargs;
+
         switch ($this->endpointType($url)) {
             case 'google_chat':
                 // Google Chat needs a raw JSON body; it has no channel/username/icon
                 // concept, so those Slack fields are dropped rather than forged.
-                $this->apiargs['headers']['Content-Type'] = 'application/json; charset=UTF-8';
-                $this->apiargs['body'] = wp_json_encode(array(
-                    'text' => $this->stripSlackAlerts($this->messageText()),
+                $args['headers']['Content-Type'] = 'application/json; charset=UTF-8';
+                $args['body'] = $this->jsonBody(array(
+                    'text' => $this->stripSlackAlerts($this->messageText($payload)),
                 ));
                 break;
 
             case 'teams':
-                $this->apiargs['headers']['Content-Type'] = 'application/json';
-                $this->apiargs['body'] = wp_json_encode($this->messageCard());
+                $args['headers']['Content-Type'] = 'application/json';
+                $args['body'] = $this->jsonBody($this->messageCard($payload));
                 break;
 
             default:
                 // Slack / Mattermost: legacy form-encoded payload field. Unchanged.
-                unset($this->apiargs['headers']['Content-Type']);
-                $this->apiargs['body'] = array('payload' => json_encode($this->payload));
+                $args['body'] = array('payload' => json_encode($payload));
         }
+
+        return $args;
     }
 
-    // the human-readable message, falling back to the encoded payload
-    private function messageText()
+    // JSON_INVALID_UTF8_SUBSTITUTE: a PHP error message or a customer name can carry
+    // invalid UTF-8, and wp_json_encode would otherwise return false and post nothing.
+    private function jsonBody($data)
     {
-        return isset($this->payload['text']) ? $this->payload['text'] : wp_json_encode($this->payload);
+        $json = wp_json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE);
+
+        return $json === false ? '' : $json;
+    }
+
+    // the human-readable message for platforms with no attachment concept
+    private function messageText($payload)
+    {
+        if (isset($payload['text']) && $payload['text'] !== '') {
+            return $payload['text'];
+        }
+
+        // Every structured notification (WooCommerce, post status, plugin changes,
+        // error alerts) sets only 'attachments' — see notification_send(). Without
+        // this, those messages would arrive as a raw JSON dump.
+        $lines = array();
+        if (!empty($payload['attachments']) && is_array($payload['attachments'])) {
+            foreach ($payload['attachments'] as $attachment) {
+                if (is_array($attachment)) {
+                    $lines = array_merge($lines, $this->flattenAttachment($attachment));
+                }
+            }
+        }
+        if ($lines) {
+            return implode("\n", $lines);
+        }
+
+        return $this->jsonBody($payload);
+    }
+
+    // a Slack attachment as plain lines; color/footer/ts are chrome, not content
+    private function flattenAttachment($attachment)
+    {
+        $lines = array();
+
+        if (!empty($attachment['pretext'])) {
+            $lines[] = $attachment['pretext'];
+        }
+        if (!empty($attachment['title'])) {
+            $lines[] = !empty($attachment['title_link'])
+                ? '<' . $attachment['title_link'] . '|' . $attachment['title'] . '>'
+                : $attachment['title'];
+        }
+        if (!empty($attachment['text'])) {
+            $lines[] = $attachment['text'];
+        }
+        if (!empty($attachment['fields']) && is_array($attachment['fields'])) {
+            foreach ($attachment['fields'] as $field) {
+                if (isset($field['title'], $field['value'])) {
+                    $lines[] = $field['title'] . ': ' . $field['value'];
+                }
+            }
+        }
+
+        return $lines;
     }
 
     // <!channel> / <!here> only mean something to Slack; elsewhere they render literally
@@ -182,13 +245,13 @@ class Slack_Hooker_Message
 
     // Teams MessageCard — still accepted by Workflows webhooks, and smaller than an
     // Adaptive Card. Buttons would not render, but we only send plain notifications.
-    private function messageCard()
+    private function messageCard($payload)
     {
-        $title = isset($this->payload['username']) && $this->payload['username']
-            ? $this->payload['username']
+        $title = isset($payload['username']) && $payload['username']
+            ? $payload['username']
             : get_bloginfo('name');
 
-        $text = $this->slackLinksToMarkdown($this->stripSlackAlerts($this->messageText()));
+        $text = $this->slackLinksToMarkdown($this->stripSlackAlerts($this->messageText($payload)));
 
         return array(
             '@type'      => 'MessageCard',
