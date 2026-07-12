@@ -1,3 +1,25 @@
+## 5.6.9
+12 July 2026
+
+- SOF: bump options-framework submodule to b089e95
+	- pick up the HTML attribute escaping fix (options-framework#7)
+	- hardening only: this plugin passes static esc_html__ field config, not user input
+
+## 5.6.8
+7 July 2026
+
+- Version bump only, no code changes (SVN deploy retry after the submodule migration)
+
+## 5.6.7
+7 July 2026
+
+- Version bump only, no code changes (SVN deploy retry after the submodule migration)
+
+## 5.6.6
+7 July 2026
+
+- Version bump only, no code changes (SVN deploy retry after the submodule migration)
+
 ## 5.6.5
 6 July 2026
 
