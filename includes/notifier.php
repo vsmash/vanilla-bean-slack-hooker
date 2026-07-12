@@ -45,6 +45,7 @@ if (!function_exists('\VanillaBeans\SlackHooker\vbean_schedulesend')) {
 
 // </editor-fold>
 
+add_shortcode('slackhooker', '\VanillaBeans\SlackHooker\vbean_slacknotify');
 
 
 
