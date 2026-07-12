@@ -1,19 +1,22 @@
 === Vanilla Bean Slack Hooker ===
 Contributors: vsmash
 Donate link: http://www.velvary.com.au/vanilla-beans/wordpress/slack-hooker/
-Tags: slack, webhook, message, api, alerts, notifications, mattermost, discord, automation
-Requires at least: 5.4
+Tags: slack, notifications, webhook, mattermost, alerts
+Requires at least: 5.9
+Requires PHP: 7.4
 Tested up to: 7.0
 PHP Tested up to: 8.2
 Stable tag: 5.6.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Notify one or more Slack, Mattermost or other endpoints with configured webhooks for WordPress events. Notifications for plugin installs and updates, page views, error messages, signups, WooCommerce sales or anything you like with fully customizable shortcodes, hooks and filter functions.
+Send WordPress events to Slack, Mattermost, Google Chat, Microsoft Teams or email: WooCommerce sales, plugin changes, PHP errors, shortcodes, hooks.
 
 == Description ==
 
-**Automated notifications from your WordPress site to your Slack / Mattermost application channels and webhooks.**
+**Automated notifications from your WordPress site to your Slack, Mattermost, Google Chat and Microsoft Teams channels.**
+
+Notify one or more webhook endpoints when things happen on your site: plugin installs and updates, post publication, comments, signups, PHP errors, WooCommerce sales, or anything you like via shortcodes, hooks and filter functions.
 
 There is no limit to the ways you may integrate this plugin.
 
@@ -24,7 +27,8 @@ It supports all other Vanilla Bean plugins and is available for under-the-hood u
 * **Real-time WordPress notifications** - Post status changes, comments, user registrations
 * **WooCommerce integration** - Sales notifications with order details
 * **Plugin management alerts** - Install, update, and deletion notifications
-* **Multiple webhook support** - Send to Slack, Mattermost, Discord, or custom endpoints
+* **PHP Error Alerts** - Route PHP errors to Slack with a call trace and configurable exemptions. Off by default *(NEW in 5.6.4)*
+* **Multiple webhook support** - Send to Slack, Mattermost, Google Chat, Microsoft Teams, or custom endpoints
 * **Formatted data messages** - Rich attachments with structured name-value pairs *(NEW in 5.5.2)*
 * **Smart queueing** - Non-blocking message delivery with optional immediate sending
 * **Email fallback** - Send notifications via email when webhooks aren't available
@@ -132,6 +136,7 @@ There are defaults for all except the message. You can specify:
 = Use Cases =
 
 * **E-commerce monitoring** - WooCommerce order notifications
+* **Error monitoring** - PHP errors pushed to a channel as they happen, with a call trace
 * **User activity tracking** - Registration and login alerts
 * **System monitoring** - Server status and health checks
 * **Content management** - Post publication and comment notifications
@@ -159,8 +164,8 @@ We can be found at:
    * Activate through the Plugins menu in WordPress
 
 3. **Configuration**
-   * Go to Settings > Slack Hooker in your WordPress admin
-   * Add your webhook URLs (Slack, Mattermost, etc.)
+   * Go to Vanilla Beans > Slack Hooker in your WordPress admin
+   * Add your webhook URLs (Slack, Mattermost, Google Chat, Microsoft Teams, etc.)
    * Configure notification preferences
    * Test your setup with the built-in test message feature
 
@@ -168,7 +173,7 @@ We can be found at:
 
 = What webhook services are supported? =
 
-The plugin supports any webhook-compatible service including Slack, Mattermost, Discord, Microsoft Teams, and custom webhook endpoints. Email addresses can also be used as fallback endpoints.
+Slack, Mattermost, Google Chat and Microsoft Teams (via a Power Automate Workflows webhook URL). Custom endpoints that accept a Slack-style payload also work. Email addresses can be used as endpoints instead of a webhook.
 
 = Are messages sent immediately? =
 
@@ -180,7 +185,11 @@ Yes! You can configure multiple default endpoints in the admin settings, or spec
 
 = What data is included in WooCommerce notifications? =
 
-WooCommerce notifications include order ID, customer name, total amount, payment status, and admin links to view the order details.
+The order total, plus an admin link to open the order in WooCommerce.
+
+= Can I get PHP errors sent to Slack? =
+
+Yes. PHP Error Alerts sends PHP errors to your endpoint with a call trace, and lets you exempt errors you do not want to hear about. It ships disabled, so switch it on at Vanilla Beans > Slack Hooker > Notifications > PHP Error Alerts.
 
 = Is the plugin compatible with multisite? =
 
@@ -200,6 +209,36 @@ Absolutely! The new data message functions (5.5.2+) allow you to create rich for
 
 == Changelog ==
 
+= 5.6.9 =
+*Release Date: July 12, 2026*
+
+* Hardened HTML attribute escaping in the settings framework
+
+= 5.6.8 =
+*Release Date: July 7, 2026*
+
+* Version bump only; no functional changes
+
+= 5.6.7 =
+*Release Date: July 7, 2026*
+
+* Version bump only; no functional changes
+
+= 5.6.6 =
+*Release Date: July 7, 2026*
+
+* Version bump only; no functional changes
+
+= 5.6.5 =
+*Release Date: July 6, 2026*
+
+* Moved the settings framework to a shared, centrally maintained library. Internal change; the settings form behaves as before
+
+= 5.6.4 =
+*Release Date: May 26, 2026*
+
+* **NEW: PHP Error Alerts** - Route PHP errors to Slack with a call trace and configurable exemptions. Disabled by default; enable at Vanilla Beans > Slack Hooker > Notifications
+
 = 5.6.3 =
 *Release Date: May 25, 2026*
 
@@ -213,55 +252,42 @@ Absolutely! The new data message functions (5.5.2+) allow you to create rich for
 * **NEW: Formatted data message support** - Rich attachments with name-value pairs
 * **NEW: vbean_send_data() function** - Send structured data messages easily
 * **NEW: vbean_build_data_message() function** - Build custom attachment messages
-* Enhanced MAIASS configuration support
-* Improved documentation with comprehensive examples
-* Better Slack field formatting for structured data display
 
 = 5.5.0 =
 *Release Date: April 21, 2025*
 
-* Fixed overly zealous escaping issues
-* Improved message content handling
+* Fixed overly zealous escaping of message content
 
 = 5.4.6 =
 *Release Date: April 21, 2025*
 
-* **Security update** - Enhanced input filtering and validation
-* Removed unneeded files for improved security
+* **Security update** - Enhanced input filtering, validation and sanitization
+* Removed unneeded files
 * Tested with WordPress 6.8 and PHP 8.2
-* Added comprehensive input sanitization
 
 = 5.3.1 =
 * Tested with WordPress 6.5 and PHP 8.2
-* Compatibility updates
 
 = 5.2.14 =
 * **Bugfix** - Fixed default channel reference typo affecting plugin upgrade notifications
-* Improved notification reliability
 
 = 5.2.11 =
-* **Bugfix** - Fixed default channel reference issue
-* Enhanced plugin upgrade notification handling
+* **Bugfix** - Fixed default channel reference issue in plugin upgrade notifications
 
 = 5.2.7 =
 * Fixed versioning inconsistency
-* Updated version management
 
 = 5.2.0 =
 * **NEW: Email notification support** - Use email addresses as webhook endpoints
-* Enhanced fallback messaging options
 
 = 5.1.7 =
-* Admin menu bugfix
-* Improved navigation
+* Fixed the admin menu
 
 = 5.1.6 =
 * Tested with WordPress 6.2
-* Compatibility verification
 
 = 5.1.3 =
 * Fixed double replacement in get_url() string processing
-* Improved URL handling
 
 = 5.1.2 =
 * Fixed default value handling for fields
@@ -269,11 +295,9 @@ Absolutely! The new data message functions (5.5.2+) allow you to create rich for
 
 = 5.1.1 =
 * Fixed path error for MCE plugin integration
-* Improved file path handling
 
 = 5.1.0 =
 * **NEW: Optional cron messaging** - Support for environments without cron
-* Enhanced message delivery options
 
 = 5.0.0 =
 *Major overhaul - Previous settings not carried forward*
@@ -282,7 +306,6 @@ Absolutely! The new data message functions (5.5.2+) allow you to create rich for
 * **NEW: Alert mentions** - Add @here, @channel, @everyone to endpoints
 * Improved admin layout and user experience
 * Tested with PHP 8.1 and WordPress 6.1
-* Enhanced endpoint management
 
 = 4.0.5 =
 * Fixed JavaScript naming conflict
@@ -301,139 +324,106 @@ Absolutely! The new data message functions (5.5.2+) allow you to create rich for
 
 = 3.30 =
 * Added support for endpoints in channels
-* Enhanced channel targeting
 
 = 3.22 =
 * **Bugfix** - Fixed post status change notifications
-* Improved reliability
 
 = 3.21 =
 * Tested with WordPress 6.1 and PHP 8.1
-* Compatibility updates
 
 = 3.10 =
-* Added site URL to notifications for better identification
 * **NEW: Post/page publication notifications**
-* Enhanced notification content
+* Added site URL to notifications for better identification
 
 = 3.05 =
 * Added system plugin updater integration
-* Improved plugin management
 
 = 3.04 =
 * Fixed broken image references
-* Improved asset handling
 
 = 3.03 =
 * Cosmetic improvements
-* UI enhancements
 
 = 3.02 =
 * **NEW: WooCommerce sales notifications**
-* E-commerce integration support
 
 = 3.00 =
 * **NEW: Mattermost compatibility**
-* Expanded webhook service support
 
 = 2.60 =
 * Added current user information to plugin alerts
-* Enhanced notification context
 
 = 2.55 =
 * Added toggle option for help display
-* Improved user experience
 
 = 2.47 =
 * Enabled inheritance of v2.46 channel defaults
-* Backward compatibility improvements
 
 = 2.46 =
 * **NEW: Channel selection** for default alerts
-* Enhanced configuration options
 
 = 2.45 =
 * Fixed test message typo
-* Improved testing functionality
 
 = 2.44 =
 * **NEW: Plugin management notifications** - Install, update, delete alerts
 * Tested with WordPress 5.3
-* Enhanced system monitoring
 
 = 2.20 =
-* Migrated from cURL to WordPress HTTP API
-* Improved reliability and compatibility
+* Migrated from cURL to the WordPress HTTP API
 
 = 2.14 =
-* Updated @channel syntax for latest Slack API
-* Enhanced mention functionality
+* Updated @channel syntax for the latest Slack API
 
 = 2.13 =
 * Fixed plugin validation update bug
-* Added programmatic examples to settings page
-* Improved documentation
+* Added programmatic examples to the settings page
 
 = 2.12 =
 * Updated plugin icon
-* Visual improvements
 
 = 2.11 =
 * Added missing menu icon
-* UI enhancements
 
 = 2.10 =
 * Tested with PHP 7.1 and WordPress 4.7
-* Compatibility verification
 
 = 2.0 =
 * **NEW: Repetition prevention** - Avoid spam notifications
 * **NEW: Multiple webhook support**
-* Enhanced message management
 
 = 1.50 =
 * Fixed icon display issue in notifications
-* Improved visual consistency
 
 = 1.42 =
 * Set delayed send to properly flag Slack as working
-* Enhanced status tracking
 
 = 1.41 =
-* **Performance improvement** - Moved to cron job to prevent page load delays
-* Non-blocking message delivery
+* **Performance improvement** - Moved to a cron job to prevent page load delays
 
 = 1.24 =
 * Tested with WordPress 4.5
-* Compatibility updates
 
 = 1.23 =
 * Updated 404 error handling
-* Improved error management
 
 = 1.22 =
 * Updated common functions
-* Code optimization
 
 = 1.21 =
 * **NEW: Default icon support**
-* Enhanced customization options
 
 = 1.2 =
 * **NEW: Default comment alerts**
-* Comment notification system
 
 = 1.1 =
 * Fixed broken plugin download link
-* Improved distribution
 
 = 1.01 =
 * Fixed shortcode documentation bug
-* Documentation improvements
 
 = 1.0 =
-* Initial release
-* Basic Slack webhook integration
+* Initial release - Slack webhook integration
 
 == Upgrade Notice ==
 

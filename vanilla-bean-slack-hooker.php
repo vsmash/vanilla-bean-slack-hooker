@@ -17,6 +17,8 @@ Plugin Name:       Vanilla Bean Slack Hooker
 Plugin URI:        https://www.velvary.com.au
 Description:       Integrate webhooks into your site for notifications via Slack, Mattermost or others
 Version: 5.6.9
+Requires at least: 5.9
+Requires PHP:      7.4
 Author:            Velvary
 Author URI:        https://www.velvary.com.au
 License:           GPL-2.0+
