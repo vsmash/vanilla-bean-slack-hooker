@@ -92,7 +92,7 @@ class Slack_Hooker_Message
             if(str_starts_with($endpoint["url"],'https://hooks.slack.com/services/') && isset($this->payload['text'])){
                 $this->payload['text']=$this->payload['username'].': '.$this->payload['text'];
             }
-            $this->apiargs['body'] = array('payload' => json_encode($this->payload));
+            $this->applyTransport($endpoint['url']);
             if($this->canSend($endpoint['url'])){
                 // if $endpoint['url'] is an email address, send it to the email address
                 $isemail =filter_var($endpoint['url'], FILTER_VALIDATE_EMAIL);
@@ -110,6 +110,94 @@ class Slack_Hooker_Message
             }
         }
         return $output;
+    }
+
+    // which webhook family an endpoint belongs to
+    public function endpointType($url)
+    {
+        $host = strtolower((string) wp_parse_url($url, PHP_URL_HOST));
+
+        if ($host === 'chat.googleapis.com') {
+            return 'google_chat';
+        }
+        // Teams incoming webhooks are Power Automate Workflows (Logic Apps hosts).
+        // The legacy Office 365 connectors (*.webhook.office.com) were disabled in
+        // May 2026; they are matched here only so an old URL fails at Microsoft
+        // with a real error rather than silently posting Slack JSON.
+        if ($this->hostMatches($host, 'logic.azure.com') || $this->hostMatches($host, 'webhook.office.com')) {
+            return 'teams';
+        }
+
+        return 'slack';
+    }
+
+    private function hostMatches($host, $suffix)
+    {
+        return $host === $suffix || str_ends_with($host, '.' . $suffix);
+    }
+
+    // set body + content-type for this endpoint's webhook family
+    private function applyTransport($url)
+    {
+        switch ($this->endpointType($url)) {
+            case 'google_chat':
+                // Google Chat needs a raw JSON body; it has no channel/username/icon
+                // concept, so those Slack fields are dropped rather than forged.
+                $this->apiargs['headers']['Content-Type'] = 'application/json; charset=UTF-8';
+                $this->apiargs['body'] = wp_json_encode(array(
+                    'text' => $this->stripSlackAlerts($this->messageText()),
+                ));
+                break;
+
+            case 'teams':
+                $this->apiargs['headers']['Content-Type'] = 'application/json';
+                $this->apiargs['body'] = wp_json_encode($this->messageCard());
+                break;
+
+            default:
+                // Slack / Mattermost: legacy form-encoded payload field. Unchanged.
+                unset($this->apiargs['headers']['Content-Type']);
+                $this->apiargs['body'] = array('payload' => json_encode($this->payload));
+        }
+    }
+
+    // the human-readable message, falling back to the encoded payload
+    private function messageText()
+    {
+        return isset($this->payload['text']) ? $this->payload['text'] : wp_json_encode($this->payload);
+    }
+
+    // <!channel> / <!here> only mean something to Slack; elsewhere they render literally
+    private function stripSlackAlerts($text)
+    {
+        return trim(preg_replace('/<!([a-z]+)(\|[^>]*)?>/i', '', $text));
+    }
+
+    // Slack link syntax <url|label> -> markdown, which MessageCard's text field renders
+    private function slackLinksToMarkdown($text)
+    {
+        $text = preg_replace('/<(https?:\/\/[^>|]+)\|([^>]+)>/', '[$2]($1)', $text);
+        return preg_replace('/<(https?:\/\/[^>|]+)>/', '$1', $text);
+    }
+
+    // Teams MessageCard — still accepted by Workflows webhooks, and smaller than an
+    // Adaptive Card. Buttons would not render, but we only send plain notifications.
+    private function messageCard()
+    {
+        $title = isset($this->payload['username']) && $this->payload['username']
+            ? $this->payload['username']
+            : get_bloginfo('name');
+
+        $text = $this->slackLinksToMarkdown($this->stripSlackAlerts($this->messageText()));
+
+        return array(
+            '@type'      => 'MessageCard',
+            '@context'   => 'https://schema.org/extensions',
+            'summary'    => $title,
+            'themeColor' => '0076D7',
+            'title'      => $title,
+            'text'       => $text,
+        );
     }
 
     // function to cron shedule remote post
