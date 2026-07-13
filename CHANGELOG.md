@@ -1,3 +1,14 @@
+## 5.6.11
+13 July 2026
+
+- send Teams an Adaptive Card, not the legacy MessageCard
+	feat: send Teams an Adaptive Card instead of the legacy MessageCard
+	  - feat: wrap the card in the envelope a Power Automate Workflows webhook expects (#16)
+	  - feat: map attachment fields to an Adaptive Card FactSet, keyed title/value
+	  - fix: one TextBlock per line, so Markdown soft breaks can no longer collapse the layout
+	  - note: MessageCard is deprecated for new integrations and Microsofts own designer refuses to render it
+	  - note: verified by pasting the plugins generated card into the Actionable Message Designer, it renders
+
 ## 5.6.10
 12 July 2026
 
