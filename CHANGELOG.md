@@ -1,6 +1,13 @@
-## 5.6.12
+## 5.6.13
 13 July 2026
 
+- scope the test-send handler to our own options panel
+	fix: scope the test-send handler to our own options panel (#4)
+	  - fix: exopite_sof_do_save_options is a global hook and fires for every Exopite panel and metabox on the site, not just ours
+	  - fix: check the unique the hook passes, so another plugins save no longer reaches into our options array
+	  - fix: this is why saving Local Knowledge warned Undefined array key send_test on every save
+	  - fix: worse than a warning, a foreign panel carrying send_test=yes actually fired our test notification, verified live
+	  - fix: guard textarea_testcontent too, it was dereferenced unchecked
 - invalid UTF-8 no longer silently drops a notification
 	fix: do not blame JSON in the skip log when the payload simply had nothing to render
 	  - fix: only report a JSON error when json_last_error actually reports one
