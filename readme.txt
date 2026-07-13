@@ -175,6 +175,8 @@ We can be found at:
 
 Slack, Mattermost, Google Chat and Microsoft Teams (via a Power Automate Workflows webhook URL). Custom endpoints that accept a Slack-style payload also work. Email addresses can be used as endpoints instead of a webhook.
 
+Google Chat and Microsoft Teams support is new in this release. If a message does not arrive, please tell us at support@velvary.com.au and include the webhook host, so we can fix it.
+
 = Are messages sent immediately? =
 
 By default, messages are queued and sent via WordPress cron to avoid blocking page loads. You can force immediate sending by setting `sendnow="true"` in shortcodes or `$now=true` in programmatic calls.
