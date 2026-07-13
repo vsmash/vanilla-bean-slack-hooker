@@ -158,7 +158,7 @@ class Slack_Hooker_Message
 
             case 'teams':
                 $args['headers']['Content-Type'] = 'application/json';
-                $args['body'] = $this->jsonBody($this->messageCard($payload));
+                $args['body'] = $this->jsonBody($this->teamsMessage($payload));
                 break;
 
             default:
@@ -264,48 +264,64 @@ class Slack_Hooker_Message
         return trim(preg_replace('/<!([a-z]+)(\|[^>]*)?>/i', '', $text));
     }
 
-    // Slack link syntax <url|label> -> markdown, which MessageCard's text field renders
+    // Slack link syntax <url|label> -> markdown, which an Adaptive Card TextBlock renders
     private function slackLinksToMarkdown($text)
     {
         $text = preg_replace('/<(https?:\/\/[^>|]+)\|([^>]+)>/', '[$2]($1)', $text);
         return preg_replace('/<(https?:\/\/[^>|]+)>/', '$1', $text);
     }
 
-    // Teams MessageCard — still accepted by Workflows webhooks, and smaller than an
-    // Adaptive Card. Buttons would not render, but we only send plain notifications.
-    private function messageCard($payload)
+    // Teams: an Adaptive Card in the envelope a Power Automate Workflows webhook expects.
+    // Adaptive Card, not the legacy MessageCard: it is what Microsoft documents for
+    // Workflows, it is the only format their own designer will render, and MessageCard
+    // is deprecated for new integrations.
+    private function teamsMessage($payload)
     {
         $title = isset($payload['username']) && $payload['username']
             ? $payload['username']
             : get_bloginfo('name');
 
         $parts = $this->attachmentParts($payload);
+        $lines = ($parts['lines'] || $parts['facts'])
+            ? $parts['lines']
+            : array($this->messageText($payload));
 
-        if ($parts['lines'] || $parts['facts']) {
-            // MessageCard text is Markdown, where a single newline is a soft break and
-            // renders as a space — hence the blank line between prose blocks. Facts get
-            // their own name/value layout, which the docs prefer over inlining them.
-            $lines = $parts['lines'];
-        } else {
-            $lines = array($this->messageText($payload));
+        // One TextBlock per line, rather than one block of newline-joined Markdown —
+        // in Markdown a single newline is a soft break and would collapse to a space.
+        $body = array(array(
+            'type'   => 'TextBlock',
+            'text'   => $title,
+            'weight' => 'Bolder',
+            'size'   => 'Medium',
+            'wrap'   => true,
+        ));
+        foreach ($lines as $line) {
+            $line = $this->slackLinksToMarkdown($this->stripSlackAlerts($line));
+            if ($line !== '') {
+                $body[] = array('type' => 'TextBlock', 'text' => $line, 'wrap' => true);
+            }
         }
-
-        $text = $this->slackLinksToMarkdown($this->stripSlackAlerts(implode("\n\n", $lines)));
-
-        $card = array(
-            '@type'      => 'MessageCard',
-            '@context'   => 'https://schema.org/extensions',
-            'summary'    => $title,
-            'themeColor' => '0076D7',
-            'title'      => $title,
-            'text'       => $text,
-        );
-
         if ($parts['facts']) {
-            $card['sections'] = array(array('facts' => $parts['facts']));
+            // An Adaptive Card FactSet keys on title/value; our facts carry name/value.
+            $facts = array();
+            foreach ($parts['facts'] as $fact) {
+                $facts[] = array('title' => $fact['name'], 'value' => $fact['value']);
+            }
+            $body[] = array('type' => 'FactSet', 'facts' => $facts);
         }
 
-        return $card;
+        return array(
+            'type'        => 'message',
+            'attachments' => array(array(
+                'contentType' => 'application/vnd.microsoft.card.adaptive',
+                'content'     => array(
+                    'type'    => 'AdaptiveCard',
+                    '$schema' => 'http://adaptivecards.io/schemas/adaptive-card.json',
+                    'version' => '1.4',
+                    'body'    => $body,
+                ),
+            )),
+        );
     }
 
     // function to cron shedule remote post
