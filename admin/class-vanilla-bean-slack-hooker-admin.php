@@ -884,9 +884,17 @@ class Vanilla_Bean_Slack_Hooker_Admin {
 
 
     // send a test from admin
-    public function send_test_notification($obj){
-        if($obj['send_test']=='yes'){
-             Vanilla_Bean_Slack_Hooker::notification_send($obj["textarea_testcontent"],false,'default');
+    public function send_test_notification($obj, $unique = ''){
+        // exopite_sof_do_save_options is a GLOBAL Exopite hook: it fires for every options
+        // panel and every metabox on the site that uses the framework, not just ours. Local
+        // Knowledge has both, so saving one of its posts handed us its options array — hence
+        // the "Undefined array key send_test" warnings. Only act on our own panel.
+        if($unique !== $this->plugin_name){
+            return $obj;
+        }
+        if(isset($obj['send_test']) && $obj['send_test']=='yes'){
+             $content = isset($obj['textarea_testcontent']) ? $obj['textarea_testcontent'] : '';
+             Vanilla_Bean_Slack_Hooker::notification_send($content,false,'default');
         }
         return $obj;
     }
