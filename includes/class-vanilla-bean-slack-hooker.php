@@ -177,7 +177,9 @@ class Vanilla_Bean_Slack_Hooker {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
         $this->loader->add_action( 'admin_menu', $plugin_admin, 'vbean_menu', 1 );
         $this->loader->add_action( 'init', $plugin_admin, 'admin_menu', 999 );
-        $this->loader->add_action('exopite_sof_do_save_options', $plugin_admin,'send_test_notification', 20);
+        // 2 args: the hook passes the panel's $unique, and we must check it — the hook is
+        // global and fires for every Exopite panel and metabox on the site, not just ours.
+        $this->loader->add_action('exopite_sof_do_save_options', $plugin_admin,'send_test_notification', 20, 2);
         $this->loader->add_action( 'activated_plugin', $plugin_admin, 'plugin_activated', 999 );
         $this->loader->add_action( 'deactivated_plugin', $plugin_admin, 'plugin_deactivated', 999 );
         $this->loader->add_action( 'delete_plugin', $plugin_admin, 'plugin_deleted', 999 );
