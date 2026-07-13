@@ -10,11 +10,11 @@ Stable tag: 5.6.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Send WordPress events to Slack, Mattermost, Google Chat, Microsoft Teams or email: WooCommerce sales, plugin changes, PHP errors, shortcodes, hooks.
+Send WordPress events to Slack, Mattermost, Google Chat or email: WooCommerce sales, plugin changes, PHP errors, shortcodes, hooks.
 
 == Description ==
 
-**Automated notifications from your WordPress site to your Slack, Mattermost, Google Chat and Microsoft Teams channels.**
+**Automated notifications from your WordPress site to your Slack, Mattermost and Google Chat channels.**
 
 Notify one or more webhook endpoints when things happen on your site: plugin installs and updates, post publication, comments, signups, PHP errors, WooCommerce sales, or anything you like via shortcodes, hooks and filter functions.
 
@@ -28,7 +28,7 @@ It supports all other Vanilla Bean plugins and is available for under-the-hood u
 * **WooCommerce integration** - Sales notifications with order details
 * **Plugin management alerts** - Install, update, and deletion notifications
 * **PHP Error Alerts** - Route PHP errors to Slack with a call trace and configurable exemptions. Off by default *(NEW in 5.6.4)*
-* **Multiple webhook support** - Send to Slack, Mattermost, Google Chat, Microsoft Teams, or custom endpoints
+* **Multiple webhook support** - Send to Slack, Mattermost, Google Chat, or custom endpoints
 * **Formatted data messages** - Rich attachments with structured name-value pairs *(NEW in 5.5.2)*
 * **Smart queueing** - Non-blocking message delivery with optional immediate sending
 * **Email fallback** - Send notifications via email when webhooks aren't available
@@ -165,7 +165,7 @@ We can be found at:
 
 3. **Configuration**
    * Go to Vanilla Beans > Slack Hooker in your WordPress admin
-   * Add your webhook URLs (Slack, Mattermost, Google Chat, Microsoft Teams, etc.)
+   * Add your webhook URLs (Slack, Mattermost, Google Chat, etc.)
    * Configure notification preferences
    * Test your setup with the built-in test message feature
 
@@ -173,9 +173,9 @@ We can be found at:
 
 = What webhook services are supported? =
 
-Slack, Mattermost, Google Chat and Microsoft Teams (via a Power Automate Workflows webhook URL). Custom endpoints that accept a Slack-style payload also work. Email addresses can be used as endpoints instead of a webhook.
+Slack, Mattermost and Google Chat. Custom endpoints that accept a Slack-style payload also work. Email addresses can be used as endpoints instead of a webhook.
 
-Google Chat and Microsoft Teams support is new in this release. If a message does not arrive, please tell us at support@velvary.com.au and include the webhook host, so we can fix it.
+Google Chat support is new in this release. If a message does not arrive, please tell us at support@velvary.com.au and include the webhook host, so we can fix it.
 
 = Are messages sent immediately? =
 
@@ -210,6 +210,15 @@ Absolutely! The new data message functions (5.5.2+) allow you to create rich for
 5. WooCommerce sales notifications
 
 == Changelog ==
+
+= 5.6.11 =
+*Release Date: July 12, 2026*
+
+* Fixed the [slackhooker] shortcode, which had stopped sending
+* NEW: Google Chat webhook support
+* Fixed notifications to multiple endpoints: a later endpoint could inherit an earlier one's channel and @here mention
+* Email endpoints now receive readable text instead of raw data
+* Corrected the minimum WordPress version to 5.9, and declared a minimum PHP version
 
 = 5.6.9 =
 *Release Date: July 12, 2026*
