@@ -76,40 +76,252 @@ class Slack_Hooker_Message
         }
         $output = array();
         foreach ($this->endpoints as $endpoint) {
+            // Each endpoint gets its own copy. The mutations below are per-endpoint
+            // (channel, alert ping, icon, Slack username prefix); sharing one payload
+            // let them accumulate, so a second endpoint inherited the first one's
+            // channel and a doubled "User: User: " prefix.
+            $payload = $this->payload;
+
             if ($endpoint["channel"]) {
-                $this->payload['channel'] = '#' . $endpoint['channel'];
+                $payload['channel'] = '#' . $endpoint['channel'];
             }
             // check for slack app
-            if($endpoint["alert"] && isset($this->payload['text'])){
-                $this->payload['text']='<!'.$endpoint["alert"].'>'.$this->payload['text'];
+            if($endpoint["alert"] && isset($payload['text'])){
+                $payload['text']='<!'.$endpoint["alert"].'>'.$payload['text'];
             }
             if(isset($endpoint["icon"]) && $endpoint["icon"]){
-                $this->payload['icon_emoji']=$endpoint["icon"];
+                $payload['icon_emoji']=$endpoint["icon"];
             }
             elseif(isset($endpoint["emoji"]) && $endpoint["emoji"]){
-                $this->payload['icon_emoji']=$endpoint["emoji"];
+                $payload['icon_emoji']=$endpoint["emoji"];
             }
-            if(str_starts_with($endpoint["url"],'https://hooks.slack.com/services/') && isset($this->payload['text'])){
-                $this->payload['text']=$this->payload['username'].': '.$this->payload['text'];
+            if(str_starts_with($endpoint["url"],'https://hooks.slack.com/services/') && isset($payload['text'])){
+                $payload['text']=$payload['username'].': '.$payload['text'];
             }
-            $this->apiargs['body'] = array('payload' => json_encode($this->payload));
+            $args = $this->transportArgs($endpoint['url'], $payload);
             if($this->canSend($endpoint['url'])){
                 // if $endpoint['url'] is an email address, send it to the email address
                 $isemail =filter_var($endpoint['url'], FILTER_VALIDATE_EMAIL);
 
                 if($isemail){
-                    $email_body = isset($this->payload['text']) ? $this->payload['text'] : json_encode($this->payload);
-                    $output[] = wp_mail($endpoint['url'], $this->payload['username'], $email_body);
+                    $output[] = wp_mail($endpoint['url'], $payload['username'], $this->messageText($payload));
                     continue;
                 }
                 if($this->options['omit_cron']=='yes') {
-                    $output[] = wp_remote_post($endpoint['url'], $this->apiargs);
+                    $output[] = wp_remote_post($endpoint['url'], $args);
                 }else{
-                    $this->cronSend($endpoint['url'], $this->apiargs);
+                    $this->cronSend($endpoint['url'], $args);
                 }
             }
         }
         return $output;
+    }
+
+    // which webhook family an endpoint belongs to
+    public function endpointType($url)
+    {
+        $host = strtolower((string) wp_parse_url($url, PHP_URL_HOST));
+
+        if ($host === 'chat.googleapis.com') {
+            return 'google_chat';
+        }
+        // Teams incoming webhooks are Power Automate Workflows (Logic Apps hosts).
+        // The legacy Office 365 connectors (*.webhook.office.com) were disabled in
+        // May 2026; they are matched here only so an old URL fails at Microsoft
+        // with a real error rather than silently posting Slack JSON.
+        if ($this->hostMatches($host, 'logic.azure.com') || $this->hostMatches($host, 'webhook.office.com')) {
+            return 'teams';
+        }
+
+        return 'slack';
+    }
+
+    private function hostMatches($host, $suffix)
+    {
+        return $host === $suffix || str_ends_with($host, '.' . $suffix);
+    }
+
+    // request args for this endpoint's webhook family
+    private function transportArgs($url, $payload)
+    {
+        $args = $this->apiargs;
+
+        switch ($this->endpointType($url)) {
+            case 'google_chat':
+                // Google Chat needs a raw JSON body; it has no channel/username/icon
+                // concept, so those Slack fields are dropped rather than forged.
+                $args['headers']['Content-Type'] = 'application/json; charset=UTF-8';
+                $args['body'] = $this->jsonBody(array(
+                    'text' => $this->stripSlackAlerts($this->messageText($payload)),
+                ));
+                break;
+
+            case 'teams':
+                $args['headers']['Content-Type'] = 'application/json';
+                $args['body'] = $this->jsonBody($this->teamsMessage($payload));
+                break;
+
+            default:
+                // Slack / Mattermost: legacy form-encoded payload field. Unchanged.
+                $args['body'] = array('payload' => json_encode($payload));
+        }
+
+        return $args;
+    }
+
+    // JSON_INVALID_UTF8_SUBSTITUTE: a PHP error message or a customer name can carry
+    // invalid UTF-8, and wp_json_encode would otherwise return false and post nothing.
+    private function jsonBody($data)
+    {
+        $json = wp_json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE);
+
+        return $json === false ? '' : $json;
+    }
+
+    // Every structured notification (WooCommerce, post status, plugin changes, error
+    // alerts) sets only 'attachments' — see notification_send(). Split them into prose
+    // lines and name/value facts, so each platform can lay them out its own way.
+    private function attachmentParts($payload)
+    {
+        $parts = array('lines' => array(), 'facts' => array());
+
+        if (empty($payload['attachments']) || !is_array($payload['attachments'])) {
+            return $parts;
+        }
+        foreach ($payload['attachments'] as $attachment) {
+            if (!is_array($attachment)) {
+                continue;
+            }
+            $flat = $this->flattenAttachment($attachment);
+            $parts['lines'] = array_merge($parts['lines'], $flat['lines']);
+            $parts['facts'] = array_merge($parts['facts'], $flat['facts']);
+        }
+
+        return $parts;
+    }
+
+    // the human-readable message for platforms with no attachment concept
+    private function messageText($payload)
+    {
+        if (isset($payload['text']) && $payload['text'] !== '') {
+            return $payload['text'];
+        }
+
+        $parts = $this->attachmentParts($payload);
+        $lines = $parts['lines'];
+        foreach ($parts['facts'] as $fact) {
+            $lines[] = $fact['name'] . ': ' . $fact['value'];
+        }
+        if ($lines) {
+            return implode("\n", $lines);
+        }
+
+        return $this->jsonBody($payload);
+    }
+
+    // a Slack attachment split into prose + facts; color/footer/ts are chrome, not content
+    private function flattenAttachment($attachment)
+    {
+        $lines = array();
+        $facts = array();
+
+        if (!empty($attachment['pretext'])) {
+            $lines[] = $attachment['pretext'];
+        }
+        // author_name is content, not chrome: for a post it is the post's author, who
+        // is not the acting user named in the pretext; for a comment it carries the
+        // commenter's email. Dropping it loses information.
+        if (!empty($attachment['author_name'])) {
+            $lines[] = !empty($attachment['author_link'])
+                ? '<' . $attachment['author_link'] . '|' . $attachment['author_name'] . '>'
+                : $attachment['author_name'];
+        }
+        if (!empty($attachment['title'])) {
+            $lines[] = !empty($attachment['title_link'])
+                ? '<' . $attachment['title_link'] . '|' . $attachment['title'] . '>'
+                : $attachment['title'];
+        }
+        if (!empty($attachment['text'])) {
+            $lines[] = $attachment['text'];
+        }
+        if (!empty($attachment['fields']) && is_array($attachment['fields'])) {
+            foreach ($attachment['fields'] as $field) {
+                // build_data_message() copies caller data straight into fields, so a
+                // value can be an array; concatenating it would warn and print "Array".
+                if (isset($field['title'], $field['value'])
+                    && is_scalar($field['title']) && is_scalar($field['value'])) {
+                    $facts[] = array('name' => $field['title'], 'value' => $field['value']);
+                }
+            }
+        }
+
+        return array('lines' => $lines, 'facts' => $facts);
+    }
+
+    // <!channel> / <!here> only mean something to Slack; elsewhere they render literally
+    private function stripSlackAlerts($text)
+    {
+        return trim(preg_replace('/<!([a-z]+)(\|[^>]*)?>/i', '', $text));
+    }
+
+    // Slack link syntax <url|label> -> markdown, which an Adaptive Card TextBlock renders
+    private function slackLinksToMarkdown($text)
+    {
+        $text = preg_replace('/<(https?:\/\/[^>|]+)\|([^>]+)>/', '[$2]($1)', $text);
+        return preg_replace('/<(https?:\/\/[^>|]+)>/', '$1', $text);
+    }
+
+    // Teams: an Adaptive Card in the envelope a Power Automate Workflows webhook expects.
+    // Adaptive Card, not the legacy MessageCard: it is what Microsoft documents for
+    // Workflows, it is the only format their own designer will render, and MessageCard
+    // is deprecated for new integrations.
+    private function teamsMessage($payload)
+    {
+        $title = isset($payload['username']) && $payload['username']
+            ? $payload['username']
+            : get_bloginfo('name');
+
+        $parts = $this->attachmentParts($payload);
+        $lines = ($parts['lines'] || $parts['facts'])
+            ? $parts['lines']
+            : array($this->messageText($payload));
+
+        // One TextBlock per line, rather than one block of newline-joined Markdown —
+        // in Markdown a single newline is a soft break and would collapse to a space.
+        $body = array(array(
+            'type'   => 'TextBlock',
+            'text'   => $title,
+            'weight' => 'Bolder',
+            'size'   => 'Medium',
+            'wrap'   => true,
+        ));
+        foreach ($lines as $line) {
+            $line = $this->slackLinksToMarkdown($this->stripSlackAlerts($line));
+            if ($line !== '') {
+                $body[] = array('type' => 'TextBlock', 'text' => $line, 'wrap' => true);
+            }
+        }
+        if ($parts['facts']) {
+            // An Adaptive Card FactSet keys on title/value; our facts carry name/value.
+            $facts = array();
+            foreach ($parts['facts'] as $fact) {
+                $facts[] = array('title' => $fact['name'], 'value' => $fact['value']);
+            }
+            $body[] = array('type' => 'FactSet', 'facts' => $facts);
+        }
+
+        return array(
+            'type'        => 'message',
+            'attachments' => array(array(
+                'contentType' => 'application/vnd.microsoft.card.adaptive',
+                'content'     => array(
+                    'type'    => 'AdaptiveCard',
+                    '$schema' => 'http://adaptivecards.io/schemas/adaptive-card.json',
+                    'version' => '1.4',
+                    'body'    => $body,
+                ),
+            )),
+        );
     }
 
     // function to cron shedule remote post

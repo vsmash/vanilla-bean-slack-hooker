@@ -1,3 +1,50 @@
+## 5.6.11
+13 July 2026
+
+- send Teams an Adaptive Card, not the legacy MessageCard
+	feat: send Teams an Adaptive Card instead of the legacy MessageCard
+	  - feat: wrap the card in the envelope a Power Automate Workflows webhook expects (#16)
+	  - feat: map attachment fields to an Adaptive Card FactSet, keyed title/value
+	  - fix: one TextBlock per line, so Markdown soft breaks can no longer collapse the layout
+	  - note: MessageCard is deprecated for new integrations and Microsofts own designer refuses to render it
+	  - note: verified by pasting the plugins generated card into the Actionable Message Designer, it renders
+
+## 5.6.10
+12 July 2026
+
+- Google Chat + Microsoft Teams webhook support, compat headers, changelog catch-up
+	fix: address the code review findings on the Teams and Google Chat transports
+	  - fix: map attachment fields to MessageCard facts, the layout Microsoft documents for name/value data
+	  - fix: join Teams prose with a blank line, a single newline is a Markdown soft break and collapsed to a space
+	  - fix: keep author_name, which carries the post author and the commenter email and was being dropped
+	  - fix: guard non-scalar field values, they raised an Array to string warning on the email path too
+- fix: render structured notifications properly on Google Chat and Teams
+	  - fix: flatten Slack attachments to text, they arrived as a raw JSON dump (#15, #16)
+	  - fix: every structured message (WooCommerce, post status, plugin changes, error alerts) sets attachments and no text, so the fallback fired for all of them
+	  - fix: give each endpoint its own payload copy, mutations were accumulating across endpoints
+	  - fix: a second endpoint no longer inherits the first ones channel or @here ping
+	  - fix: Google Chat no longer inherits the Slack username prefix
+	  - fix: email endpoints now get readable text instead of a JSON dump, a pre-existing bug
+	  - fix: substitute invalid UTF-8 rather than encoding to false and posting an empty body
+- SOF: bump options-framework submodule to b089e95
+	- pick up the HTML attribute escaping fix (options-framework#7)
+	- hardening only: this plugin passes static esc_html__ field config, not user input
+
+## 5.6.8
+7 July 2026
+
+- Version bump only, no code changes (SVN deploy retry after the submodule migration)
+
+## 5.6.7
+7 July 2026
+
+- Version bump only, no code changes (SVN deploy retry after the submodule migration)
+
+## 5.6.6
+7 July 2026
+
+- Version bump only, no code changes (SVN deploy retry after the submodule migration)
+
 ## 5.6.5
 6 July 2026
 
