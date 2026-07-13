@@ -98,18 +98,29 @@ class Slack_Hooker_Message
             if(str_starts_with($endpoint["url"],'https://hooks.slack.com/services/') && isset($payload['text'])){
                 $payload['text']=$payload['username'].': '.$payload['text'];
             }
-            $args = $this->transportArgs($endpoint['url'], $payload);
-            if($this->canSend($endpoint['url'])){
-                // if $endpoint['url'] is an email address, send it to the email address
-                $isemail =filter_var($endpoint['url'], FILTER_VALIDATE_EMAIL);
+            // if $endpoint['url'] is an email address, send it to the email address
+            $isemail = filter_var($endpoint['url'], FILTER_VALIDATE_EMAIL);
 
+            $args = false;
+            if($isemail){
+                $body = $this->messageText($payload);
+            }else{
+                $args = $this->transportArgs($endpoint['url'], $payload);
+                $body = $args;
+            }
+
+            // Nothing renderable or encodable. Skip BEFORE canSend(), which charges a
+            // rate-limit slot: spending one on a message we cannot send would refuse a
+            // later valid message, which is the very failure #17 is about.
+            if($body === false){
+                $this->logUnsendable($endpoint['url']);
+                $output[] = false;
+                continue;
+            }
+
+            if($this->canSend($endpoint['url'])){
                 if($isemail){
-                    $output[] = wp_mail($endpoint['url'], $payload['username'], $this->messageText($payload));
-                    continue;
-                }
-                // Nothing encodable: posting an empty body just earns a 400 and loses
-                // the message. Email above still works, so it is checked first.
-                if($args === false){
+                    $output[] = wp_mail($endpoint['url'], $payload['username'], $body);
                     continue;
                 }
                 if($this->options['omit_cron']=='yes') {
@@ -158,14 +169,18 @@ class Slack_Hooker_Message
                 // Google Chat needs a raw JSON body; it has no channel/username/icon
                 // concept, so those Slack fields are dropped rather than forged.
                 $args['headers']['Content-Type'] = 'application/json; charset=UTF-8';
-                $body = $this->jsonBody(array(
-                    'text' => $this->stripSlackAlerts($this->messageText($payload)),
-                ));
+                $text = $this->messageText($payload);
+                // Guard the false: stripSlackAlerts(false) would coerce to '' and post
+                // a perfectly encodable empty message, so the skip would never fire.
+                $body = ($text === false)
+                    ? false
+                    : $this->jsonBody(array('text' => $this->stripSlackAlerts($text)));
                 break;
 
             case 'teams':
                 $args['headers']['Content-Type'] = 'application/json';
-                $body = $this->jsonBody($this->teamsMessage($payload));
+                $card = $this->teamsMessage($payload);
+                $body = ($card === false) ? false : $this->jsonBody($card);
                 break;
 
             default:
@@ -180,6 +195,20 @@ class Slack_Hooker_Message
         $args['body'] = $body;
 
         return $args;
+    }
+
+    // #17 was a notification lost without a trace. Skipping is better than posting an
+    // empty body, but say so, or we have only moved the silence. Logs the host, never
+    // the URL — a webhook URL is a credential.
+    private function logUnsendable($url)
+    {
+        $host = wp_parse_url($url, PHP_URL_HOST);
+
+        error_log(sprintf(
+            'Vanilla Bean Slack Hooker: could not encode a notification for %s (%s). Message not sent.',
+            $host ? $host : 'an endpoint',
+            json_last_error_msg()
+        ));
     }
 
     // JSON_INVALID_UTF8_SUBSTITUTE: a PHP error message or a WooCommerce field pasted
@@ -295,9 +324,16 @@ class Slack_Hooker_Message
             : get_bloginfo('name');
 
         $parts = $this->attachmentParts($payload);
-        $lines = ($parts['lines'] || $parts['facts'])
-            ? $parts['lines']
-            : array($this->messageText($payload));
+        if ($parts['lines'] || $parts['facts']) {
+            $lines = $parts['lines'];
+        } else {
+            $text = $this->messageText($payload);
+            if ($text === false) {
+                // Nothing renderable and nothing encodable — let the caller skip.
+                return false;
+            }
+            $lines = array($text);
+        }
 
         // One TextBlock per line, rather than one block of newline-joined Markdown —
         // in Markdown a single newline is a soft break and would collapse to a space.
