@@ -202,12 +202,21 @@ class Slack_Hooker_Message
     // the URL — a webhook URL is a credential.
     private function logUnsendable($url)
     {
-        $host = wp_parse_url($url, PHP_URL_HOST);
+        // Only ever name an email endpoint in full. A webhook URL is a credential, so if
+        // the host will not parse we say nothing rather than log the secret.
+        $host  = wp_parse_url($url, PHP_URL_HOST);
+        $label = filter_var($url, FILTER_VALIDATE_EMAIL) ? $url : ($host ? $host : 'an endpoint');
+
+        // json_last_error() is only meaningful if the last encode actually failed —
+        // do not blame JSON when the payload simply had nothing to render.
+        $reason = ( json_last_error() !== JSON_ERROR_NONE )
+            ? json_last_error_msg()
+            : 'nothing renderable in the payload';
 
         error_log(sprintf(
-            'Vanilla Bean Slack Hooker: could not encode a notification for %s (%s). Message not sent.',
-            $host ? $host : 'an endpoint',
-            json_last_error_msg()
+            'Vanilla Bean Slack Hooker: could not build a notification for %s (%s). Message not sent.',
+            $label,
+            $reason
         ));
     }
 
