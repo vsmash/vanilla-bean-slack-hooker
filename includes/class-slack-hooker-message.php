@@ -107,6 +107,11 @@ class Slack_Hooker_Message
                     $output[] = wp_mail($endpoint['url'], $payload['username'], $this->messageText($payload));
                     continue;
                 }
+                // Nothing encodable: posting an empty body just earns a 400 and loses
+                // the message. Email above still works, so it is checked first.
+                if($args === false){
+                    continue;
+                }
                 if($this->options['omit_cron']=='yes') {
                     $output[] = wp_remote_post($endpoint['url'], $args);
                 }else{
@@ -141,7 +146,9 @@ class Slack_Hooker_Message
         return $host === $suffix || str_ends_with($host, '.' . $suffix);
     }
 
-    // request args for this endpoint's webhook family
+    // request args for this endpoint's webhook family, or false if the payload cannot
+    // be encoded at all — in which case the caller must skip rather than post an empty
+    // body, which every platform answers with a 400 and the notification is lost.
     private function transportArgs($url, $payload)
     {
         $args = $this->apiargs;
@@ -151,31 +158,37 @@ class Slack_Hooker_Message
                 // Google Chat needs a raw JSON body; it has no channel/username/icon
                 // concept, so those Slack fields are dropped rather than forged.
                 $args['headers']['Content-Type'] = 'application/json; charset=UTF-8';
-                $args['body'] = $this->jsonBody(array(
+                $body = $this->jsonBody(array(
                     'text' => $this->stripSlackAlerts($this->messageText($payload)),
                 ));
                 break;
 
             case 'teams':
                 $args['headers']['Content-Type'] = 'application/json';
-                $args['body'] = $this->jsonBody($this->teamsMessage($payload));
+                $body = $this->jsonBody($this->teamsMessage($payload));
                 break;
 
             default:
-                // Slack / Mattermost: legacy form-encoded payload field. Unchanged.
-                $args['body'] = array('payload' => json_encode($payload));
+                // Slack / Mattermost: legacy form-encoded payload field.
+                $json = $this->jsonBody($payload);
+                $body = ($json === false) ? false : array('payload' => $json);
         }
+
+        if ($body === false) {
+            return false;
+        }
+        $args['body'] = $body;
 
         return $args;
     }
 
-    // JSON_INVALID_UTF8_SUBSTITUTE: a PHP error message or a customer name can carry
-    // invalid UTF-8, and wp_json_encode would otherwise return false and post nothing.
+    // JSON_INVALID_UTF8_SUBSTITUTE: a PHP error message or a WooCommerce field pasted
+    // from Word can carry invalid UTF-8, and a plain encode returns false. Substituting
+    // the bad bytes keeps the message deliverable instead of silently dropping it.
+    // Returns false only for what substitution cannot rescue (depth, recursion, NAN).
     private function jsonBody($data)
     {
-        $json = wp_json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE);
-
-        return $json === false ? '' : $json;
+        return wp_json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE);
     }
 
     // Every structured notification (WooCommerce, post status, plugin changes, error
