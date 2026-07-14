@@ -1,0 +1,26 @@
+version: 2
+
+updates:
+  # This plugin has no npm or composer manifests — its only tracked dependency is the
+  # shared options framework, consumed as a git submodule and pinned by SHA. Dependabot
+  # opens a PR when that pin falls behind, which is the only way anyone finds out.
+  #
+  # Note: options-framework is a PRIVATE repo. Dependabot needs read access to it, granted
+  # via Settings > Secrets and variables > Dependabot > "Dependabot secrets", or by adding
+  # the repo under organisation-level Dependabot access. Without that, this silently does
+  # nothing. If the repo is ever made public, no credential is needed.
+  - package-ecosystem: gitsubmodule
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      # MAIASS parses the subject line; keep it in the house format.
+      prefix: "chore"
+
+  # Keep the Actions themselves current (actions/checkout etc).
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "chore"
