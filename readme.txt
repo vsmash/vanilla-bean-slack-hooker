@@ -210,6 +210,7 @@ Absolutely! The new data message functions (5.5.2+) allow you to create rich for
 5. WooCommerce sales notifications
 6. Notification settings: choose which WordPress events are sent, including PHP error alerts
 7. Send a test notification to check your endpoints
+8. The same notifications delivered to Google Chat
 
 == Changelog ==
 
