@@ -66,29 +66,54 @@ function notification_send($message, $endpoints = null)
     return($msg->sendit());
 }
 
+// Resolve the person an event is attributed to. Single source of truth — every
+// message builder must go through this rather than reading wp_get_current_user()
+// directly.
+//
+// wp_get_current_user() never returns null: with nobody logged in (WP-CLI, cron,
+// auto-update) it still returns a WP_User, with ID 0 and display_name set to an
+// EMPTY STRING. So `empty($user)` never fires and `?? 'System'` never fires either
+// — the name just renders blank. Test ID + a non-empty display_name instead.
+if (!function_exists('\VanillaBeans\SlackHooker\resolve_actor_username')) {
+    function resolve_actor_username($context = null)
+    {
+        // An explicit context (e.g. carried on $hook_extra by the upgrader) wins.
+        if (is_string($context) && trim($context) !== '') {
+            return trim($context);
+        }
+
+        $current_user = wp_get_current_user();
+        if ($current_user instanceof \WP_User
+            && $current_user->ID
+            && trim((string) $current_user->display_name) !== ''
+        ) {
+            return $current_user->display_name;
+        }
+
+        // Nobody logged in — this is what the CLI/Auto-update User setting is for.
+        $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
+        $configured = isset($options['cli_username']) ? trim((string) $options['cli_username']) : '';
+        if ($configured !== '') {
+            return $configured;
+        }
+
+        if (defined('WP_CLI') && WP_CLI) {
+            return 'WP-CLI';
+        }
+        if (defined('DOING_CRON') && DOING_CRON) {
+            return 'Auto-update';
+        }
+
+        return 'System';
+    }
+}
+
 // build plugin attachment message
 if (!function_exists('\VanillaBeans\SlackHooker\build_attachment_message')) {
     function build_attachment_message($color, $status, $plugin, $context = null)
     {
-        $current_user = wp_get_current_user();
-        // is $current_user an object?
-        $username = empty($current_user) ? 'System' : $current_user->display_name??'System';
-        
-        // Check for stored context first (from version detection)
-        if ($context) {
-            $username = $context;
-        }
-        // Otherwise check if WP-CLI is currently running
-        elseif (defined('WP_CLI') && WP_CLI) {
-            $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
-            $username = isset($options['cli_username']) ? $options['cli_username'] : 'WP-CLI';
-        }
-        // Check for auto-updates
-        elseif (defined('DOING_CRON') && DOING_CRON) {
-            $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
-            $username = isset($options['cli_username']) ? $options['cli_username'] : 'Auto-update';
-        }
-        
+        $username = resolve_actor_username($context);
+
         $message = array(
             "color" => $color,
             "pretext" => "Plugin " . $status . " on " . get_site_url() . " by " . $username,

@@ -974,8 +974,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
 
     // build plugin attachment message
     public static function build_plugin_message($color,$status,$plugin_file){
-        $current_user = wp_get_current_user();
-        $username = empty($current_user) ? 'System' : $current_user->display_name;
+        $username = \VanillaBeans\SlackHooker\resolve_actor_username();
         // if $plugin_file is a string, then it's a plugin file name
         // if it's an array, then it's a plugin data array
         $plugin_name = is_array($plugin_file)? $plugin_file['Name'] : get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin_file.'', false)['Name'];

@@ -130,16 +130,10 @@ class Vanilla_Bean_Slack_Hooker_Loader {
          // Register early to ensure it fires for all update methods
          add_action('upgrader_process_complete', function($upgrader, $hook_extra) {
              // Add context for non-admin updates
-             if (!isset($hook_extra['context'])) {
-                 if (defined('WP_CLI') && WP_CLI) {
-                     $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
-                     $hook_extra['context'] = isset($options['cli_username']) ? $options['cli_username'] : 'WP-CLI';
-                 } elseif (defined('DOING_CRON') && DOING_CRON) {
-                     $options = get_exopite_sof_option('vanilla-bean-slack-hooker');
-                     $hook_extra['context'] = isset($options['cli_username']) ? $options['cli_username'] : 'Auto-update';
-                 }
+             if (empty($hook_extra['context'])) {
+                 $hook_extra['context'] = \VanillaBeans\SlackHooker\resolve_actor_username();
              }
-             
+
              \VanillaBeans\SlackHooker\plugin_upgrader($upgrader, $hook_extra);
          }, 10, 2);
 	}

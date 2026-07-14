@@ -230,8 +230,8 @@ class Vanilla_Bean_Slack_Hooker_Public {
 
     // build post status attachment message
     public static function build_post_status_message($color,$status,$post){
-        $current_user = wp_get_current_user();
-        $username = empty($current_user) ? 'System' : $current_user->display_name;
+        // A scheduled post transitions under cron, with nobody logged in.
+        $username = \VanillaBeans\SlackHooker\resolve_actor_username();
         $author = get_user_by('id', $post->post_author);
         $message = array(
             "color" => $color,
