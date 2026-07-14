@@ -109,6 +109,17 @@ class Vanilla_Bean_Slack_Hooker {
         /** options **/
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'options-framework/exopite-simple-options/exopite-simple-options-framework-class.php';
 
+        /**
+         * Version guard. NOT class-guarded, so it loads from OUR copy even when an older
+         * plugin's framework won the class name — which is the case it exists to report.
+         * file_exists() so an older submodule pin (no guard file) degrades to nothing rather
+         * than fataling.
+         */
+        $sof_guard = plugin_dir_path( dirname( __FILE__ ) ) . 'options-framework/exopite-simple-options/version-guard.php';
+        if ( file_exists( $sof_guard ) ) {
+            require_once $sof_guard;
+        }
+
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
