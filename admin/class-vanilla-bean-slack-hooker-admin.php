@@ -845,6 +845,13 @@ class Vanilla_Bean_Slack_Hooker_Admin {
         );
 
         $options_panel = new Exopite_Simple_Options_Framework( $config_submenu, $fields );
+
+        // Slack Hooker sorts LAST alphabetically, so any other Vanilla Bean plugin on the site
+        // wins the framework class name and this plugin silently runs THAT copy. Say so if it
+        // is older than we need. Notice only — never fatal.
+        if ( function_exists( 'exopite_sof_require_version' ) ) {
+            exopite_sof_require_version( '1.0.6', 'Slack Hooker', $options_panel );
+        }
     }
     /**
      * Available fields:
