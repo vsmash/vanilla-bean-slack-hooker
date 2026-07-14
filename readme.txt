@@ -204,10 +204,12 @@ Absolutely! The new data message functions (5.5.2+) allow you to create rich for
 == Screenshots ==
 
 1. Example of WordPress monitoring notifications in Slack
-2. Admin settings page with webhook configuration
+2. Admin settings page: default endpoints for Slack, Mattermost, Google Chat or email
 3. Rich formatted data messages with structured fields
 4. Plugin management notifications
 5. WooCommerce sales notifications
+6. Notification settings: choose which WordPress events are sent, including PHP error alerts
+7. Send a test notification to check your endpoints
 
 == Changelog ==
 
