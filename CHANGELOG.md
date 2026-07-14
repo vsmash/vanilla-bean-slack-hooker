@@ -1,6 +1,13 @@
-## 5.6.14
+## 5.6.15
 14 July 2026
 
+- Updated the README to align the changelog with the release contents, including the missing 5.6.13 entry for WordPress.org users and the new framework hardening notice in 5.6.15.
+- Guarded against older Exopite framework versions impacting functionality.
+	- Loaded version-guard.php alongside the framework to prevent fatal errors with outdated versions and raised an admin notice for stale copies.
+- Resolved several issues with the options-framework:
+	- The accordion field now properly declares its properties, addressing deprecation warnings in PHP 8.2 and preventing fatal errors in PHP 9.
+	- The framework now resolves asset URLs in a centralized manner and raises an admin notice when URL mapping fails.
+	- Guarded against missing configuration keys in the card and accordion fields to prevent warnings and potential TypeErrors on PHP 8.
 - chore: dependabot config for the options-framework submodule
 	chore: add dependabot config for the options-framework submodule
 	  - feat: track the options-framework submodule pin, dependabot opens a PR when it falls behind, which is otherwise invisible because submodules are pinned by SHA
