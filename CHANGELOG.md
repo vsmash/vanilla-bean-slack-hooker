@@ -1,6 +1,37 @@
-## 5.6.11
+## 5.6.13
 13 July 2026
 
+- scope the test-send handler to our own options panel
+	fix: scope the test-send handler to our own options panel (#4)
+	  - fix: exopite_sof_do_save_options is a global hook and fires for every Exopite panel and metabox on the site, not just ours
+	  - fix: check the unique the hook passes, so another plugins save no longer reaches into our options array
+	  - fix: this is why saving Local Knowledge warned Undefined array key send_test on every save
+	  - fix: worse than a warning, a foreign panel carrying send_test=yes actually fired our test notification, verified live
+	  - fix: guard textarea_testcontent too, it was dereferenced unchecked
+- invalid UTF-8 no longer silently drops a notification
+	fix: do not blame JSON in the skip log when the payload simply had nothing to render
+	  - fix: only report a JSON error when json_last_error actually reports one
+	  - fix: never print an unparseable endpoint verbatim, a webhook URL is a credential and only an email address is safe to name in full
+- fix: address the code review findings on the invalid UTF-8 guard
+	  - fix: skip an unsendable message before canSend(), it was charging a rate-limit slot and then discarding the message, so a later valid alert got refused
+	  - fix: propagate the encode failure through Google Chat and Teams, stripSlackAlerts(false) coerced to an empty string and posted an encodable empty message, so the skip never fired
+	  - fix: log a skipped notification instead of dropping it silently, which is the exact failure this ticket is about
+	  - note: the log records the endpoint host only, never the URL, a webhook URL is a credential
+- fix: stop invalid UTF-8 silently dropping a notification (#17)
+	  - fix: substitute invalid UTF-8 rather than encoding to false and posting an empty payload to Slack
+	  - fix: a PHP error message or a WooCommerce field pasted from Word could carry bad bytes, and the alert was lost with no trace
+	  - fix: skip the endpoint entirely when nothing can be encoded, instead of posting an empty body for a guaranteed 400
+	  - fix: apply the same guard to Google Chat and Teams, which returned an empty string on encode failure
+	  - note: the Slack body stays byte-identical for any payload that was already valid
+	  - chore: bump options-framework submodule to db4978a for the image field fix (options-framework#8)
+- docs: remove Microsoft Teams from the public listing until it is proven
+	  - docs: the Teams code ships and works, it is simply not advertised, so nobody is promised an integration we have never seen deliver
+	  - docs: keep Google Chat public, its contract is a single documented JSON field rather than a nested card envelope
+	  - docs: add the missing 5.6.11 changelog entry, the readme section had fallen behind the stable tag again
+	  - note: CHANGELOG.md keeps the full Teams detail and is excluded from the wordpress.org ship
+- docs: flag Google Chat and Teams as new and invite bug reports
+	  - docs: the payload and rendering are verified against Microsofts renderer, but no live delivery has been observed yet
+	  - docs: ask users to report a non-arriving message with the webhook host, so we hear about it rather than assume it works
 - send Teams an Adaptive Card, not the legacy MessageCard
 	feat: send Teams an Adaptive Card instead of the legacy MessageCard
 	  - feat: wrap the card in the envelope a Power Automate Workflows webhook expects (#16)
