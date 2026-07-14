@@ -1,3 +1,16 @@
+## 5.6.14
+14 July 2026
+
+- chore: dependabot config for the options-framework submodule
+	chore: add dependabot config for the options-framework submodule
+	  - feat: track the options-framework submodule pin, dependabot opens a PR when it falls behind, which is otherwise invisible because submodules are pinned by SHA
+	  - feat: also keep the github actions themselves current
+	  - note: this plugin has no npm or composer manifests, so the submodule is the only dependency there is to track
+	  - note: options-framework is private, so dependabot needs read access granted to it or this silently does nothing
+- chore: bump options-framework submodule to v1.0.1 (c1b7837)
+	  - fix: pick up the removal of unconditional debug logging from the framework core class, which wrote the plugin url to error_log on every call
+	  - note: verified live, the Slack Hooker settings screen renders 77 fields with zero PHP errors and no framework asset 4xx
+
 ## 5.6.13
 13 July 2026
 
