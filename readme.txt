@@ -211,6 +211,19 @@ Absolutely! The new data message functions (5.5.2+) allow you to create rich for
 
 == Changelog ==
 
+= 5.6.15 =
+*Release Date: July 14, 2026*
+
+* Fixed deprecation warnings on the settings screen under PHP 8.2 and newer
+* The settings screen now tells you if another plugin is running an out-of-date copy of the shared options framework, instead of failing quietly
+* Fixed settings fields that could error when an option had never been saved
+
+= 5.6.13 =
+*Release Date: July 13, 2026*
+
+* Fixed: a notification containing invalid characters — a PHP error message, or text pasted from Word — was silently discarded instead of sent
+* Fixed: saving another plugin's settings could fire a Slack Hooker test notification
+
 = 5.6.11 =
 *Release Date: July 12, 2026*
 
