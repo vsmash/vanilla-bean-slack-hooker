@@ -43,7 +43,7 @@ jobs:
       contents: write  # Required to push the version bump commit
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0          # Full history needed for changelog generation
           token: ${{ secrets.GH_PAT }}  # PAT allows the bot to push back to the repo
