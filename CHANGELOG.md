@@ -1,3 +1,19 @@
+## 5.7.1
+30 July 2026
+
+- Add direct-file-access guards to six plugin files
+	Add direct-file-access guards to six plugin files
+	  - fix: guard six files with WPINC so direct HTTP requests no longer disclose absolute server paths
+	  - fix: place the guard after the namespace declaration in legacy.php and notifier.php where a leading statement is a parse error
+	  - note: three of the six previously emitted uncaught fatals exposing the server path, verified empty after the change on vanillabeans.test
+- docs: add Google Chat screenshot caption (8)
+	  - docs: new screenshot showing the same notifications delivered to Google Chat
+	  - note: the wordpress.org screenshot images are committed separately to the SVN assets dir
+- docs: refresh the screenshot list for the current admin UI
+	  - docs: rewrite caption 2, the settings shot now shows Slack, Mattermost, Google Chat and email endpoints
+	  - docs: add caption 6 (notification settings incl. PHP error alerts) and 7 (test send)
+	  - note: the wordpress.org screenshot images (2 refreshed, 6 and 7 new) are committed separately to the SVN assets dir
+
 ## 5.6.15
 14 July 2026
 
