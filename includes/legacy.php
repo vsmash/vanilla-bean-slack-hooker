@@ -19,6 +19,10 @@
 // upgrade plan to provide autocomplete
 namespace VanillaBeans;
 
+if ( ! defined( 'WPINC' ) ) {
+    die;
+}
+
 if(function_exists('\VanillaBeans\vanillabeans_settings')){
     return  ;
 }else{

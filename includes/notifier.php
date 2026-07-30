@@ -5,6 +5,10 @@ namespace VanillaBeans\SlackHooker;
 use Slack_Hooker_Message;
 use Vanilla_Bean_Slack_Hooker_Admin;
 
+if ( ! defined( 'WPINC' ) ) {
+    die;
+}
+
 // <editor-fold defaultstate="collapsed" desc="Legacy Wrappers">
 
 // Legacy wrapper for backwards compatibility
