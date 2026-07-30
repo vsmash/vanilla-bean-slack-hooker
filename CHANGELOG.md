@@ -1,6 +1,15 @@
-## 5.7.1
+## 5.7.2
 30 July 2026
 
+- Fix the LiveSettings plugin-card block
+	Fix the LiveSettings plugin-card block
+	  - fix: replace strip_tags with wp_strip_all_tags, avoiding the PHP 8.1 null deprecation and leaving no script or style text behind
+	  - fix: move the per-iteration action-links reset above the first append so the More Details link is no longer discarded on every card
+	  - fix: give the action links their own kses allowlist so their classes, aria-labels and spans survive output instead of being stripped
+	  - fix: close the second span in the installed state, which opened two and closed one
+	  - fix: wrap the three sprintf strings in gettext calls, they sat under translators comments while not being translatable
+	  - fix: escape the install and update urls with esc_url before interpolating them into href
+	  - note: verified on vanillabeans.test with 6 cards rendering, More Details present, classes and aria-labels intact, no PHP errors
 - Add direct-file-access guards to six plugin files
 	Add direct-file-access guards to six plugin files
 	  - fix: guard six files with WPINC so direct HTTP requests no longer disclose absolute server paths
