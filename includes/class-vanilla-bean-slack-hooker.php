@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'WPINC' ) ) {
+    die;
+}
+
 require_once (SLACKHOOKER_DIR.'options-framework/exopite-simple-options/exopite-simple-options-framework-class.php');
 /**
  * The file that defines the core plugin class

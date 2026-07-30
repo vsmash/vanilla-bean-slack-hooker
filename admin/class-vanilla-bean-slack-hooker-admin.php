@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'WPINC' ) ) {
+    die;
+}
+
 // require once the legacy.php file
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/legacy.php';
 /**

@@ -11,6 +11,10 @@
  * @package    Vanilla_Bean_Slack_Hooker
  * @subpackage Vanilla_Bean_Slack_Hooker/admin/partials
  */
+
+if ( ! defined( 'WPINC' ) ) {
+    die;
+}
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
