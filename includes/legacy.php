@@ -439,17 +439,27 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
                                                 "code" => array(), "pre" => array(), "em" => array(),"strong" => array(),
                                                 "ul" => array(), "ol" => array(), "li" => array(), "p" => array(), "br" => array()
                                             );
+                                            // The action links carry their own classes and ARIA attributes, which
+                                            // $plugins_allowedtags does not permit, so they get their own allowlist.
+                                            $action_links_allowedtags = array
+                                            (
+                                                "li" => array(),
+                                                "a" => array( "href" => array(), "title" => array(), "target" => array(), "class" => array(), "aria-label" => array(), "data-title" => array() ),
+                                                "span" => array( "class" => array(), "title" => array() )
+                                            );
                                             $title = wp_kses($plugin["name"], $plugins_allowedtags);
-                                            $description = strip_tags($plugin["short_description"]);
+                                            $description = wp_strip_all_tags($plugin["short_description"]);
                                             $author = wp_kses($plugin["author"], $plugins_allowedtags);
                                             $version = wp_kses($plugin["version"], $plugins_allowedtags);
-                                            $name = strip_tags( $title . " " . $version );
+                                            $name = wp_strip_all_tags( $title . " " . $version );
                                             $details_link   = self_admin_url( "plugin-install.php?tab=plugin-information&amp;plugin=" . $plugin["slug"] .
                                                 "&amp;TB_iframe=true&amp;width=600&amp;height=550" );
 
-                                            /* translators: 1: Plugin name and version. */
-                                            $action_links[] = '<a href="' . esc_url( $details_link ) . '" class="thickbox" aria-label="' . esc_attr( sprintf("More information about %s", $name ) ) . '" data-title="' . esc_attr( $name ) . '">' . __( 'More Details', 'vanilla-bean-slack-hooker' ) . '</a>';
+                                            // Reset per plugin, before the first link is added, so links do not
+                                            // accumulate across iterations and "More Details" is not discarded.
                                             $action_links = array();
+                                            /* translators: %s: Plugin name and version. */
+                                            $action_links[] = '<a href="' . esc_url( $details_link ) . '" class="thickbox" aria-label="' . esc_attr( sprintf( __( 'More information about %s', 'vanilla-bean-slack-hooker' ), $name ) ) . '" data-title="' . esc_attr( $name ) . '">' . __( 'More Details', 'vanilla-bean-slack-hooker' ) . '</a>';
                                             if (current_user_can( "install_plugins") || current_user_can("update_plugins"))
                                             {
                                                 $status = install_plugin_install_status( $plugin );
@@ -458,20 +468,20 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
                                                     case "install":
                                                         if ( $status["url"] )
                                                         {
-                                                            /* translators: 1: Plugin name and version. */
-                                                            $action_links[] = '<a class="install-now button" href="' . $status['url'] . '" aria-label="' . esc_attr( sprintf("Install %s now", $name ) ) . '">' . __( 'Install Now', 'vanilla-bean-slack-hooker' ) . '</a>';
+                                                            /* translators: %s: Plugin name and version. */
+                                                            $action_links[] = '<a class="install-now button" href="' . esc_url( $status['url'] ) . '" aria-label="' . esc_attr( sprintf( __( 'Install %s now', 'vanilla-bean-slack-hooker' ), $name ) ) . '">' . __( 'Install Now', 'vanilla-bean-slack-hooker' ) . '</a>';
                                                         }
                                                         break;
                                                     case "update_available":
                                                         if ($status["url"])
                                                         {
-                                                            /* translators: 1: Plugin name and version */
-                                                            $action_links[] = '<a class="button" href="' . $status['url'] . '" aria-label="' . esc_attr( sprintf( "Update %s now", $name ) ) . '">' . __( 'Update Now', 'vanilla-bean-slack-hooker' ) . '</a>';
+                                                            /* translators: %s: Plugin name and version. */
+                                                            $action_links[] = '<a class="button" href="' . esc_url( $status['url'] ) . '" aria-label="' . esc_attr( sprintf( __( 'Update %s now', 'vanilla-bean-slack-hooker' ), $name ) ) . '">' . __( 'Update Now', 'vanilla-bean-slack-hooker' ) . '</a>';
                                                         }
                                                         break;
                                                     case "latest_installed":
                                                     case "newer_installed":
-                                                        $action_links[] = '<span class="pixelplug"><span class="button button-disabled '.$plugin["slug"] .'" title="' . esc_attr__( "This plugin is already installed and is up to date", 'vanilla-bean-slack-hooker' ) . ' ">' . _x( 'Installed', 'plugin', 'vanilla-bean-slack-hooker' ) . '</span>';
+                                                        $action_links[] = '<span class="pixelplug"><span class="button button-disabled ' . esc_attr( $plugin["slug"] ) . '" title="' . esc_attr__( "This plugin is already installed and is up to date", 'vanilla-bean-slack-hooker' ) . '">' . _x( 'Installed', 'plugin', 'vanilla-bean-slack-hooker' ) . '</span></span>';
                                                         break;
                                                 }
                                             }
@@ -504,8 +514,9 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
                                                                 <?php
                                                                 if ($action_links)
                                                                 {
-                                                                    // Each $action_link is safe HTML built above
-                                                                    echo wp_kses( implode("</li><li>", array_map('wp_kses_post', $action_links)), $plugins_allowedtags );
+                                                                    // Each $action_link is safe HTML built above; filter once
+                                                                    // against the allowlist that permits their classes/ARIA.
+                                                                    echo wp_kses( implode("</li><li>", $action_links), $action_links_allowedtags );
                                                                 }
                                                                 ?>
                                                             </li>
