@@ -243,7 +243,7 @@ class Vanilla_Bean_Slack_Hooker_Admin {
                 'vanillabeans-settings', //slug
                 '\VanillaBeans\LiveSettings',
                 SLACKHOOKER_DIR_URL.'/vicon.png',
-                4
+                81
             );
         }
 
