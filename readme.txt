@@ -4,7 +4,7 @@ Donate link: http://www.velvary.com.au/vanilla-beans/wordpress/slack-hooker/
 Tags: slack, notifications, webhook, mattermost, alerts
 Requires at least: 5.9
 Requires PHP: 7.4
-Tested up to: 7.0
+Tested up to: 7.1
 PHP Tested up to: 8.2
 Stable tag: 5.7.2
 License: GPLv2 or later
@@ -213,6 +213,15 @@ Absolutely! The new data message functions (5.5.2+) allow you to create rich for
 8. The same notifications delivered to Google Chat
 
 == Changelog ==
+
+= 5.7.2 =
+*Release Date: July 30, 2026*
+
+* Hardening: plugin files opened directly in a browser could return a PHP error revealing your server's file paths. They now return nothing at all.
+* Fixed the "More Details" link on the Vanilla Beans screen, which had never appeared on any plugin card
+* Fixed the buttons on those plugin cards losing their styling, and the "Installed" badge showing as plain text
+* Screen-reader labels on those buttons are no longer stripped out
+* Fixed a deprecation notice on PHP 8.1 and newer when a plugin listing came through without a description
 
 = 5.6.15 =
 *Release Date: July 14, 2026*
@@ -453,6 +462,9 @@ Absolutely! The new data message functions (5.5.2+) allow you to create rich for
 * Initial release - Slack webhook integration
 
 == Upgrade Notice ==
+
+= 5.7.2 =
+Hardening release: plugin files requested directly in a browser no longer expose your server's file paths. Recommended for all sites.
 
 = 5.5.2 =
 Major new feature: Formatted data messages with structured name-value pairs! Enhanced Slack integration with rich attachments. Update recommended for better notification formatting.

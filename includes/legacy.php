@@ -32,10 +32,6 @@ if(function_exists('\VanillaBeans\vanillabeans_settings')){
             .addendum{
 
             }
-            .pixelplug {width:1px;height:1px;visibility: hidden;}
-            .pixelplug img{
-                overflow:hidden; width:1px;height:1px;
-            }
 
         </style>
         <div class="wrap">
@@ -92,7 +88,7 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
         }
         if (file_exists(ABSPATH . "wp-admin/includes/plugin-install.php"))
         {
-            include( ABSPATH . "wp-admin/includes/plugin-install.php" );
+            include_once( ABSPATH . "wp-admin/includes/plugin-install.php" );
         }
         global $tabs, $tab, $paged, $type, $term;
         $tabs = array();
@@ -119,10 +115,6 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
                 width: 100%;
             }
 
-            .pixelplug {width:1px;height:1px;visibility: hidden;}
-            .pixelplug img{
-                overflow:hidden; width:1px;height:1px;
-            }
 
 
             .fluid-layout [class*="layout-span"] {
@@ -481,7 +473,7 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
                                                         break;
                                                     case "latest_installed":
                                                     case "newer_installed":
-                                                        $action_links[] = '<span class="pixelplug"><span class="button button-disabled ' . esc_attr( $plugin["slug"] ) . '" title="' . esc_attr__( "This plugin is already installed and is up to date", 'vanilla-bean-slack-hooker' ) . '">' . _x( 'Installed', 'plugin', 'vanilla-bean-slack-hooker' ) . '</span></span>';
+                                                        $action_links[] = '<span class="button button-disabled ' . esc_attr( $plugin["slug"] ) . '" title="' . esc_attr__( "This plugin is already installed and is up to date", 'vanilla-bean-slack-hooker' ) . '">' . _x( 'Installed', 'plugin', 'vanilla-bean-slack-hooker' ) . '</span>';
                                                         break;
                                                 }
                                             }
@@ -544,7 +536,7 @@ if(!function_exists('\VanillaBeans\LiveSettings')){
                                                         <?php
                                                         if ( !empty($plugin["tested"]) && version_compare(substr($GLOBALS["wp_version"], 0, strlen($plugin["tested"])), $plugin["tested"], ">"))
                                                         {
-                                                            echo '<span class="compatibility-untested">' . wp_kses( "<strong>Untested</strong> with your version of WordPress", $plugins_allowedtags ) . '</span>';
+                                                            echo '<span class="compatibility-untested">' . sprintf( /* translators: %s: the word "Untested", wrapped in strong tags. */ esc_html__( '%s with your version of WordPress', 'vanilla-bean-slack-hooker' ), '<strong>' . esc_html__( 'Untested', 'vanilla-bean-slack-hooker' ) . '</strong>' ) . '</span>';
                                                         }
                                                         elseif (!empty($plugin["requires"]) && version_compare(substr($GLOBALS["wp_version"], 0, strlen($plugin["requires"])), $plugin["requires"], "<"))
                                                         {
@@ -643,7 +635,7 @@ if(!function_exists('\VanillaBeans\vbean_setting')){
     }
 }
 
-if(!function_exists('\VanillaBeans\vbean_setting')){
+if(!function_exists('\VanillaBeans\vbean_textsetting')){
     // returns default if get_option not set, but returns empty if get_option is empty
     function vbean_textsetting($name,$default){
         $sval = get_option($name);

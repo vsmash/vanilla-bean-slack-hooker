@@ -80,12 +80,11 @@ Use the human-facing prefix **`VBSLACK-<N>`** where `<N>` is the GitHub issue nu
 **commit subject**, and **PR title**. The PR **body** must include `Closes #<N>` so
 GitHub auto-closes the issue on merge.
 
-**Tag every ticket with its plugin/repo name** so it's recognisable across trackers — here the repo + the `VBSLACK-` prefix do that; the Jira-tracked siblings add a plugin-name label (required in the shared `VEL` project).
+The repo plus the `VBSLACK-` prefix scope every ticket.
 
-> slack-hooker deliberately uses **GitHub Issues** as a trial of GitHub for the team.
-> The rest of the Vanilla Bean family tracks in **Jira**: pdf-validator → project
-> `TMPDES`, themelogin and meta-maid → project `VEL`. Keep this one on GitHub unless told
-> otherwise.
+> As of 2026-09-30 GitHub Issues is the standard for **every** Vanilla Bean plugin —
+> slack-hooker's trial became the rule, and the shared-Jira-project label rule is retired.
+> Jira (`TMPDES`, `VEL`) holds only pre-cutover history.
 
 ### Branches
 
