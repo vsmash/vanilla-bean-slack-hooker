@@ -1,3 +1,29 @@
+## 5.7.3
+11 October 2026
+
+- Preventative WordPress.org compliance sweep
+	Re-point the options-framework submodule at the released v1.1.0
+	  - fix: pointer moves from the merged develop commit 400db9c to cf16b53, which is tag v1.1.0 on main
+	  - note: the only delta over 400db9c is the version string in four files plus the generated CHANGELOG, so no behaviour changes between the two — this plugin is public, so it should ship a tagged framework state rather than an untagged develop commit
+	  - note: the framework release itself reaches nobody until this plugin is released to WordPress.org
+- Bump the options-framework submodule to the merged develop
+	  - fix: pointer moves from d8bc1fb to 400db9c, picking up the eac_attr__ undefined-function fix that fatalled on the framework error paths
+	  - fix: also picks up every escaping fix — OutputNotEscaped across the framework went from 419 to 0
+	  - fix: and the text domain consolidation, which made twenty previously-untranslatable strings translatable
+	  - note: this pins to the merged develop commit rather than a main release tag, because releasing the framework bumps its version and that is a human decision. The four commits main has that develop lacks are empty Release vX merges carrying no content, and package.json reads 1.0.7 on both, so nothing is lost
+	  - note: re-point to a main tag before the next WordPress.org release if you would rather ship a tagged framework state
+- Preventative WordPress.org compliance sweep
+	  - fix: bump options-framework submodule v1.0.6 to v1.0.7, dropping the dead write_log helper
+	  - fix: that helper wrote .log files into the plugin directory, which WP.org does not permit
+	  - fix: correct esc_htmlesc_html__ to esc_html__, an undefined function php -l accepts as valid
+	  - fix: restore translatability of the Untested string using a placeholder
+	  - fix: remove the orphaned pixelplug wrapper that hid the Installed badge at 1x1
+	  - fix: remove the vestigial pixelplug CSS left over from the tracking beacon
+	  - fix: set Tested up to 7.1 — the sandbox runs 7.1, not 7.0 as previously recorded
+	  - fix: move the shared admin menu off position 4, which collides with a core separator
+	  - chore: preserve the pre-existing uncommitted 5.7.2 readme changelog entry, authored earlier
+	  - docs: note in CLAUDE.md that GitHub Issues is now the standard for every family plugin
+
 ## 5.7.2
 30 July 2026
 
